@@ -9,7 +9,7 @@ if __name__ == '__main__':
 appointments = []
 gallery_items = [
     {"type": "Haircut", "image": "haircut1.jpg", "description": "Stylish haircut"},
-    {"type": "Hair Color", "image": "color1.jpg", "description": "Beautiful hair color"}
+    {"type": "Hair Color", "image": "color1.jpg", "description": "ok hair color"}
 ]
 reviews = []
 

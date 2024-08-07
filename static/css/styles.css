@@ -1,26 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo+Narrow:ital,wght@0,400..700;1,400..700&family=Archivo:ital,wght@0,100..900;1,100..900&display=swap');
+
+
 body {
-    font-family: Arial, sans-serif;
-}
+    font-family: "Archivo", sans-serif;
+} 
+
 header {
-    background: #333;
-    color: #fff;
+    color: black;
     padding: 10px 0;
     text-align: center;
 }
-nav a {
-    color: #fff;
-    margin: 0 15px;
-    text-decoration: none;
+
+/* Navigation Menu Desktop */
+nav {
+    display: flex;
 }
+
+nav a {
+    color: black;
+    margin: 0 15px;
+   
+}
+
+.nav-menu {
+    list-style-type: none;
+    display: flex;
+    margin-left: 40rem;
+    
+}
+
+.nav-menu li a {
+    text-decoration: none;
+    transition: color 0.3s ease, background-color 0.3s ease; /* Smooth transition */
+}
+
+nav img {
+    height: 5rem;
+    width: auto;
+}
+
+.nav-link:hover {
+    color: #9400FF; /* Change text color on hover */
+}
+
+.book-appointment {
+    border: 2px solid black;
+    padding: 12px;
+}
+
+.book-appointment:hover {
+    background-color: #9400FF;
+    color: white;
+    border: 2px solid #9400FF;
+}
+
+
+
+/* footer */
 footer {
-    background: #333;
-    color: #fff;
-    padding: 10px 0;
+    background: black;
+    color: white;
+    padding: 10px 10px;
     text-align: center;
     position: absolute;
     bottom: 0;
     width: 100%;
 }
+
+.footer-menu {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+
+}
+
+.footer-link {
+    text-decoration: none;
+    color: white;
+}
+
 .gallery {
     display: flex;
     flex-wrap: wrap;
