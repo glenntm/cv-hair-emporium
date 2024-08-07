@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Reviews</h2>
+<form method="POST" action="{{ url_for('reviews_page') }}">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+    <label for="review">Review:</label>
+    <textarea id="review" name="review" required></textarea>
+    <button type="submit">Submit Review</button>
+</form>
+<div class="reviews">
+    {% for review in reviews %}
+        <div class="review">
+            <h3>{{ review.name }}</h3>
+            <p>{{ review.review }}</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

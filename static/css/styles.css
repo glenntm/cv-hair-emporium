@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+}
+header {
+    background: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+nav a {
+    color: #fff;
+    margin: 0 15px;
+    text-decoration: none;
+}
+footer {
+    background: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+}
+.gallery-item {
+    margin: 10px;
+    text-align: center;
+}
+.reviews {
+    margin-top: 20px;
+}
+.review {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
