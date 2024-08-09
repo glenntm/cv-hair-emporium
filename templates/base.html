@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CV Hair Emporium</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/media-queries.css') }}">
 </head>
 <body>
     <header>
@@ -15,15 +16,30 @@
             <div>
                 <ul class="nav-menu">
                     <li><a class="nav-link" href="{{ url_for('home') }}">Home</a></li>
-                    <li><a class="nav-link" href="">About Us</a></li>
+                    <li><a class="nav-link" href="">About</a></li>
                     <li><a class="nav-link" href="{{ url_for('gallery') }}">Gallery</a></li>
                     <li><a class="nav-link" href="{{ url_for('reviews_page') }}">Reviews</a></li>
                     <li><a class="nav-link" href="">Contact</a></li>
                     <li><a class="book-appointment" href="{{ url_for('book') }}">Book Appointment</a></li>
                 </ul>
             </div>
-
         </nav>
+        <nav id="hamburger-nav">
+            <div class="logo">Glenn Telus-Mensah</div>
+            <div class="hamburger-menu"></div>
+                <div class="hamburger-icon" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="menu-links">
+                    <li><a href="#about" onclick="toggleMenu()">Home</a></li>
+                    <li><a href="#experience" onclick="toggleMenu()">Gallery</a></li>
+                    <li><a href="#projects" onclick="toggleMenu()">Reviews</a></li>
+                    <li><a href="#contact" onclick="toggleMenu()">Book Appointment</a></li>
+                </div>
+        </nav>
+
     </header>
     <main>
         {% block content %}{% endblock %}
@@ -32,7 +48,7 @@
         <div class="footer-link-container">
             <ul class="footer-menu">
                 <li><a class="footer-link" href="{{ url_for('home') }}">Home</a></li>
-                <li><a class="footer-link" href="">About Us</a></li>
+                <li><a class="footer-link" href="">About</a></li>
                 <li><a class="footer-link" href="{{ url_for('gallery') }}">Gallery</a></li>
                 <li><a class="footer-link" href="{{ url_for('reviews_page') }}">Reviews</a></li>
                 <li><a class="footer-link" href="">Contact</a></li>
