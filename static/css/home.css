@@ -133,4 +133,223 @@
       padding-bottom: 14vw;
     }
   }
+
+
+  /*-- -------------------------- -->
+<---           Stats            -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #stats-316 {
+        padding: var(--sectionPadding);
+        background-color: #1a1a1a;
+    }
+    #stats-316 .cs-card-group {
+        width: 100%;
+        /* changes to 1280px at desktop */
+        max-width: 37.5em;
+        margin: auto;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 2.5rem;
+    }
+    #stats-316 .cs-item {
+        list-style: none;
+        width: 14.6875rem;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    #stats-316 .cs-picture {
+        width: 5rem;
+        height: 5rem;
+        /* 12px - 20px */
+        margin-right: clamp(0.75rem, 3vw, 1.25rem);
+        border-radius: 50%;
+        border: 1px solid var(--primary);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* prevents flexbox from squishing it */
+        flex: none;
+    }
+    #stats-316 .cs-icon {
+        width: 2.5rem;
+        height: auto;
+    }
+    #stats-316 .cs-flex-group {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    #stats-316 .cs-number {
+        font-size: var(--headerFontSize);
+        color: var(--bodyTextColorWhite);
+        font-weight: 900;
+        line-height: 1.2em;
+        margin: 0;
+        display: block;
+    }
+    #stats-316 .cs-desc {
+        font-size: var(--bodyFontSize);
+        line-height: 1.5em;
+        color: #858585;
+        display: block;
+    }
+}
+/* Tablet - 650px */
+@media only screen and (min-width: 40.625rem) {
+    #stats-316 .cs-card-group {
+        flex-direction: row;
+        flex-wrap: wrap;
+        column-gap: 1.25rem;
+        row-gap: 2rem;
+    }
+}
+/* Small Desktop - 1024px */
+@media only screen and (min-width: 64rem) {
+    #stats-316 .cs-card-group {
+        max-width: 80rem;
+        flex-wrap: nowrap;
+        justify-content: space-evenly;
+    }
+}
+
+/*-- -------------------------- -->
+<---          Reviews           -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #reviews-62 {
+        padding: var(--sectionPadding);
+    }
+    #reviews-62 .cs-container {
+        width: 100%;
+        max-width: 80rem;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* 48px - 64px */
+        gap: clamp(3rem, 6vw, 4rem);
+    }
+    #reviews-62 .cs-content {
+        /* set text align to left if content needs to be left aligned */
+        text-align: center;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        /* centers content horizontally, set to flex-start to left align */
+        align-items: center;
+    }
+
+    #reviews-62 .cs-card-group {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+    #reviews-62 .cs-item {
+        list-style: none;
+        width: 100%;
+        max-width: 25.8125rem;
+        margin: 0;
+        padding: 0;
+    }
+    #reviews-62 .cs-img {
+        width: 4.25rem;
+        height: 4.25rem;
+        margin: 0 auto 1rem;
+        border-radius: 50%;
+        display: block;
+    }
+    #reviews-62 .cs-name {
+        font-size: 1.25rem;
+        line-height: 1.2em;
+        text-align: center;
+        font-weight: 700;
+        margin: 0;
+        color: var(--headerColor);
+        display: block;
+    }
+    #reviews-62 .cs-desc {
+        font-size: 1rem;
+        line-height: 1.5em;
+        text-align: center;
+        margin: 0 0 1rem;
+        color: #7d799c;
+        display: block;
+    }
+    #reviews-62 .cs-item-text {
+        /* 14px - 16px */
+        font-size: clamp(0.875rem, 2vw, 1rem);
+        text-align: center;
+        line-height: 1.5em;
+        margin: auto;
+        color: var(--bodyTextColor);
+    }
+    #reviews-62 .cs-button-solid {
+        font-size: 1rem;
+        /* 46px - 56px */
+        line-height: clamp(2.875rem, 5.5vw, 3.5rem);
+        text-decoration: none;
+        font-weight: 700;
+        text-align: center;
+        margin: 0;
+        color: #fff;
+        min-width: 9.375rem;
+        padding: 0 1.5rem;
+        background-color: var(--primary);
+        border-radius: 0.25rem;
+        display: inline-block;
+        position: relative;
+        z-index: 1;
+        /* prevents padding from adding to the width */
+        box-sizing: border-box;
+    }
+    #reviews-62 .cs-button-solid:before {
+        content: "";
+        position: absolute;
+        height: 100%;
+        width: 0%;
+        background: #000;
+        opacity: 1;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        border-radius: 0.25rem;
+        transition: width 0.3s;
+    }
+    #reviews-62 .cs-button-solid:hover:before {
+        width: 100%;
+    }
+}
+/* Tablet - 768px */
+@media only screen and (min-width: 48rem) {
+    #reviews-62 .cs-card-group {
+        flex-direction: row;
+        justify-content: center;
+        align-items: stretch;
+        flex-wrap: wrap;
+        row-gap: 2.5rem;
+    }
+    #reviews-62 .cs-item {
+        /* we do this so it's stackable. You can add new any number of reviews you want and they will stack and center in the middle. We dont use grid because if you have an odd number of reviews, they don't stay centered.  They align with their grid lines. If you want 4 reviews in a row, lower the width under 23% to get the desired sizes fit 4 in a row and then stack when you add more*/
+        width: clamp(31.5%, 30vw, 32.3%);
+    }
+}
+
+                                
                                   
