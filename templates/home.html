@@ -1,5 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Welcome to Our Salon</h2>
-<p>Book an appointment, view our gallery, or leave a review.</p>
+<!-- ============================================ -->
+<!--                    Hero                      -->
+<!-- ============================================ -->
+
+<section id="hero-1785">
+    <div class="cs-container">
+        <div class="cs-content">
+            <span class="cs-topper">High Quality Hair Salon in Chicago</span>
+            <h1 class="cs-title">CV Hair Emporium</h1>
+            <p class="cs-text">
+                Develop confidence, composure under pressure and the discipline needed to be a champ. This is the club you’ve been looking for.
+            </p>
+            <div class="cs-button-group">
+                <a href="" class="cs-button-solid cs-button1">Book Now</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Image -->
+    <picture class="cs-background">
+        <source media="(max-width: 600px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/People/gym-hero.png">
+        <source media="(min-width: 601px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/People/gym-hero.png">
+        <img loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/People/gym-hero.png" alt="field" width="1920" height="1200" aria-hidden="true">
+    </picture>
+
+    <!--This is a dark version. Download the image and change the fill color to match the color of the section background below it-->
+    <img class="cs-graphic cs-graphic-dark" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Graphics/dark-mode-splatter2.svg" alt="graphic" height="161" width="1920" loading="lazy" decoding="async" >
+</section>
+                                
 {% endblock %}
