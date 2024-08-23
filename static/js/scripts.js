@@ -51,4 +51,19 @@ const dropDowns = Array.from(document.querySelectorAll('#cs-navigation .cs-dropd
     }
     item.addEventListener('click', onClick)
     }
+
+//function for services tab
+function openSection(evt, sectionName) {
+    // Hide all section content
+    const sectionContents = document.querySelectorAll('.section-content');
+    sectionContents.forEach(content => content.classList.remove('active'));
+
+    // Remove active class from all section links
+    const sectionLinks = document.querySelectorAll('.section-link');
+    sectionLinks.forEach(link => link.classList.remove('active'));
+
+    // Show the current section and add the active class to the clicked section link
+    document.getElementById(sectionName).classList.add('active');
+    evt.currentTarget.classList.add('active');
+}
                             
