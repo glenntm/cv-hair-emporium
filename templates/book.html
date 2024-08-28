@@ -1,15 +1,54 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Book an Appointment</h2>
-<form method="POST" action="{{ url_for('book') }}">
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required>
-    <label for="service">Service:</label>
-    <input type="text" id="service" name="service" required>
-    <label for="date">Date:</label>
-    <input type="date" id="date" name="date" required>
-    <label for="time">Time:</label>
-    <input type="time" id="time" name="time" required>
-    <button type="submit">Book</button>
-</form>
+<!-- ============================================ -->
+<!--                   Contact                    -->
+<!-- ============================================ -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/book.css') }}">
+
+<section id="contact-983">
+    <div class="cs-container">
+        <div class="cs-content">
+            <span class="cs-topper">Contact Us</span>
+            <h2 class="cs-title">Make An Appointment</h2>
+        </div>
+        <!--Form-->
+        <form class="cs-form" id="cs-form-983" name="Contact Form" method="post">
+            <label class="cs-label">
+                Name
+                <input class="cs-input" required type="text" id="name-983" name="name" placeholder="Name">
+            </label>
+            <label class="cs-label">
+                Phone
+                <input class="cs-input" required type="text" id="phone-983" name="phone" placeholder="Phone">
+            </label>
+            <label class="cs-label">
+                Email
+                <input class="cs-input" required type="text" id="email-983" name="email" placeholder="Email">
+            </label>
+            <label class="cs-label">
+                How did you hear about us?
+                <input class="cs-input" required type="text" id="hear-983" name="heat" placeholder="Google">
+            </label>
+            <label class="cs-label cs-message">
+                Message
+                <textarea class="cs-input cs-textarea" required name="Message" id="message-983" placeholder="Write message..."></textarea>
+            </label>
+            <div class="cs-wrapper">
+                <button class="cs-button-solid cs-submit" type="submit">Send Message</button>
+            </div>
+            <div class="g-signin2" data-onsuccess="onSignIn">Sign In with Google</div>
+            <a href="{{url_for('login')}}">Login</a>
+            <a href="{{url_for('register')}}">Register</a>
+        </form>
+    </div>
+    <!--Background Image-->
+    <picture class="cs-background">
+        <!--Mobile Image-->
+        <source media="(max-width: 600px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/MISC/salon-bg-m.jpg">
+        <!--Tablet and above Image-->
+        <source media="(min-width: 601px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/MISC/salon-bg.jpg">
+        <img loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/MISC/salon-bg.jpg" alt="hair salon" width="2500" height="770">
+    </picture>
+</section>
+                                
 {% endblock %}
