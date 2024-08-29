@@ -3,6 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import UserMixin
 from secret import database_username, database_secret, databse_name, databse_password
+from flask_wtf import wtforms, FlaskForm
+from wtforms import StringField, PasswordField, SubmitField, Form
+from wtforms.validators import InputRequired,Length, ValidationError,DataRequired, Email
+from models import User
 
 
 app = Flask(__name__)
@@ -18,13 +22,25 @@ if __name__ == '__main__':
 migrate = Migrate(app, db)
 
 
-# Dummy data for demonstration
-appointments = []
-gallery_items = [
-    {"type": "Haircut", "image": "haircut1.jpg", "description": "Stylish haircut"},
-    {"type": "Hair Color", "image": "color1.jpg", "description": "ok hair color"}
-]
-reviews = []
+class RegistrationForm(FlaskForm):
+    first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=80)])
+    last_name = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=80)])
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=120)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=128)])
+    submit = SubmitField('Register')
+
+    def email_exists(self, email):
+    # Query the database to check if the email already exists
+        existing_email = User.query.filter_by(email=email.data).first()
+        if existing_email:
+            # If a user is found, raise a validation error
+            raise ValidationError('This email is already registered.')
+
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=120)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=128)])
+    submit = SubmitField('Register')
+
 
 @app.route('/')
 def home():
