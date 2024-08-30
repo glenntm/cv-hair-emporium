@@ -87,16 +87,29 @@ def login():
     form = LoginForm()
     return render_template('login.html', form=form)
 
+# Route for registration
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(email=form.email.data, password=hashed_password, first_name=form.first_name.data, last_name=form.last_name.data).decode('utf-8')
-        db.session.add(new_user)
-        db.session.commit()
-        return redirect(url_for('login'))
+        # Generate hashed password
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        new_user = User(
+            email=form.email.data,
+            password=hashed_password,
+            first_name=form.first_name.data,
+            last_name=form.last_name.data
+        )
+
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            return redirect(url_for('login'))
+        except Exception as e:
+            db.session.rollback()  # rollback in case of error
+            print(f"Error occurred: {e}")
+
     return render_template('register.html', form=form)
 
 
