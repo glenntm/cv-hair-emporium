@@ -12,4 +12,6 @@
     {{ form.password.label }} {{ form.password(size=32) }}<br>
     {{ form.submit() }}
 </form>
+
+<a href="{{ url_for('login') }}">Already have an account? Login</a>
 {% endblock %}

@@ -2,10 +2,11 @@
 {% block content %}
 <h1>Login Page</h1>
 
-<form action="POST">
+<form method="POST" action="{{ url_for('login') }}">
     {{form.hidden_tag() }}
     {{form.email}}
     {{form.password}}
     {{form.submit}}
 </form>
+<a href="{{ url_for('register') }}">Don't have an account? Sign up</a>
 {% endblock %}
