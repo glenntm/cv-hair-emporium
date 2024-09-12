@@ -2,6 +2,11 @@
 {% block content %}
 <h1>Dashboard - You are logged in</h1>
 
-
+{% if session %}
+<div><pre>{{pretty}}</pre></div>
+<div>Google Signed In</div>
+{% else %}
+<p><a href="{{url_for('googleLogin')}}"></a></p>
+{% endif %}
 <a href="{{ url_for('login') }}">Sign Out</a>
 {% endblock %}

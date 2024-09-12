@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
-from secret import database_username, database_secret, databse_name, databse_password
+from secret import database_username, database_secret, databse_name, databse_password, google_client_ID, google_client_secret, flask_secret
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, Form
 from wtforms.validators import InputRequired,Length, ValidationError,DataRequired, Email
@@ -10,8 +10,13 @@ from models import User, db, connect_db
 from flask_bcrypt import Bcrypt
 import psycopg2
 from psycopg2 import sql
+from flask_json import FlaskJSON, JsonError, json_response
+from authlib.integrations.flask_client import OAuth
+import json
+
 
 app = Flask(__name__)
+json = FlaskJSON(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{database_username}:{databse_password}@localhost:5432/{databse_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -19,8 +24,6 @@ app.config['SECRET_KEY'] = f'{database_secret}'
 
 connect_db(app)
 
-
-#connect_db(app)
 
 db_host = 'localhost'
 db_port = '5432'  # Default PostgreSQL port
@@ -39,6 +42,23 @@ login_manager.login_view='login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+appConf = {
+    "OAUTH2_CLIENT_ID": f"{google_client_ID}",
+    "OAUTH2_CLIENT_SECRET": f"{google_client_secret}",
+    "OAUTH_META_URL": "https://accounts.google.com/.well-known/openid-configuration",
+    "FLASK_SECRET": f"{flask_secret}",
+    "FLASK_PORT":5000
+}
+
+oauth = OAuth(app)
+oauth.register("myApp",
+               client_id = appConf.get("OAUTH2_CLIENT_ID"),
+               client_secret = appConf.get("OAUTH2_CLIENT_SECRET"),
+               server_metadata_url= appConf.get("OAUTH_META_URL"),
+               client_kwargs = {
+                   "scope": "openid profile email https://www.googleapis.com/auth/user.gender.read https://www.googleapis.com/auth/user.birthday.read"
+               }
+               )
 
 class RegistrationForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=80)], render_kw={"placeholder": "First Name"} )
@@ -97,11 +117,30 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
+        #check if there is an email in database 
+        if not user:
+            flash('No account found with this email address. Please register first.', 'danger')
+            return redirect(url_for('login'))
+
         if user:
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
                 return redirect(url_for('user_dashboard'))
     return render_template('login.html', form=form)
+
+# Route for google authorization
+@app.route('/google-login', methods=['GET', 'POST'])
+def googleLogin():
+    return oauth.myApp.authorize_redirect(redirect_uri=url_for("googleCallback", _external=True))
+
+# Route for google callback
+@app.route('/google-sign-in', methods=['GET', 'POST'])
+def googleCallback():
+    token = oauth.myApp.authorize_access_token()
+    session["user"] = token
+    return redirect(url_for("user_dashboard"))
+
+
 
 # Route for registration
 @app.route('/register', methods=['GET', 'POST'])
@@ -121,9 +160,11 @@ def register():
         try:
             db.session.add(new_user)
             db.session.commit()
+            flash('Registration successful. You can now log in.', 'success')
             return redirect(url_for('login'))
         except Exception as e:
             db.session.rollback()  # rollback in case of error
+            flash(f"An error occurred: {e}", 'danger')
             print(f"Error occurred: {e}")
 
     return render_template('register.html', form=form)
@@ -131,7 +172,7 @@ def register():
 @app.route('/user_dashboard', methods=['GET', 'POST'])
 @login_required
 def user_dashboard():
-    return render_template('user_dashboard.html')
+    return render_template('user_dashboard.html', session=session.get("user")) #pretty=json.dumps(session.get("user"), indent=4))
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
