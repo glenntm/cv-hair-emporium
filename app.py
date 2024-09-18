@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, json
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
-from secret import database_username, database_secret, databse_name, databse_password, google_client_ID, google_client_secret, flask_secret
+from secret import database_username, database_secret, databse_name, databse_password, google_client_ID, google_client_secret, flask_secret,google_password
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, Form
 from wtforms.validators import InputRequired,Length, ValidationError,DataRequired, Email
@@ -17,6 +17,7 @@ import json
 
 app = Flask(__name__)
 json = FlaskJSON(app)
+bcrypt = Bcrypt(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{database_username}:{databse_password}@localhost:5432/{databse_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -138,7 +139,34 @@ def googleLogin():
 def googleCallback():
     token = oauth.myApp.authorize_access_token()
     session["user"] = token
+
+    hashed_password = bcrypt.generate_password_hash(google_password).decode('utf-8')
+
+    # Print or inspect token for debugging
+    print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    print(token)
+
+    user_info = session.get('user')
+    email = user_info['userinfo']['email']
+    first_name = user_info['userinfo']['given_name']
+    last_name = user_info['userinfo']['family_name']
+    
+    # Check if user already exists in the database
+    user = User.query.filter_by(email=email).first()
+
+    if user is None:
+        # Create a new user
+        new_user = User(email=email, first_name=first_name, last_name=last_name, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+    else:
+        # Optionally update existing user details
+        user.first_name = first_name
+        user.last_name = last_name
+        db.session.commit()
+
     return redirect(url_for("user_dashboard"))
+
 
 
 
@@ -172,11 +200,21 @@ def register():
 @app.route('/user_dashboard', methods=['GET', 'POST'])
 @login_required
 def user_dashboard():
-    return render_template('user_dashboard.html', session=session.get("user")) #pretty=json.dumps(session.get("user"), indent=4))
+    #user JSON
+    user = session.get('user')
+    if user is not None:
+        first_name = user.get('given_name')
+    else:
+        first_name = None
+    print(session.get('user'))
+
+    return render_template('user_dashboard.html', session=session.get("user"), sessionType=session.get("user"), first_name=first_name) #pretty=json.dumps(session.get("user"), indent=4))
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
+    #session.pop("user", None)
+    session.clear()
     return redirect(url_for('login'))
 
 

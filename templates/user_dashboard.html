@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Dashboard - You are logged in</h1>
+<h1>Dashboard - You are logged in {{first_name}}</h1>
 
 {% if session %}
 <div><pre>{{pretty}}</pre></div>
+<h2>Full JSON</h2>
+<pre>{{ sessionType | tojson(indent=4) }}</pre>
 <div>Google Signed In</div>
 {% else %}
 <p><a href="{{url_for('googleLogin')}}"></a></p>
 {% endif %}
-<a href="{{ url_for('login') }}">Sign Out</a>
+<a href="{{ url_for('logout') }}">Sign Out</a>
 {% endblock %}
