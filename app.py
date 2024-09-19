@@ -137,14 +137,16 @@ def googleLogin():
 # Route for google callback
 @app.route('/google-sign-in', methods=['GET', 'POST'])
 def googleCallback():
+    print("Session State Before OAuth:", session.get('state'))
+    #handles exchange of OAuth provider for an access token
     token = oauth.myApp.authorize_access_token()
     session["user"] = token
 
     hashed_password = bcrypt.generate_password_hash(google_password).decode('utf-8')
 
-    # Print or inspect token for debugging
-    print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>")
-    print(token)
+        # Debugging state and token
+    print("Session State After OAuth:", session.get('state'))
+    print("OAuth Token:", token)
 
     user_info = session.get('user')
     email = user_info['userinfo']['email']
