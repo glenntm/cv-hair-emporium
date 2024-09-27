@@ -12,6 +12,8 @@ import psycopg2
 from psycopg2 import sql
 from flask_json import FlaskJSON, JsonError, json_response
 from authlib.integrations.flask_client import OAuth
+from authlib.jose import jwt, JoseError
+from authlib.jose.errors import ExpiredTokenError
 import json
 
 
@@ -57,7 +59,7 @@ oauth.register("myApp",
                client_secret = appConf.get("OAUTH2_CLIENT_SECRET"),
                server_metadata_url= appConf.get("OAUTH_META_URL"),
                client_kwargs = {
-                   "scope": "openid profile email https://www.googleapis.com/auth/user.gender.read https://www.googleapis.com/auth/user.birthday.read"
+                   "scope": "openid profile email" #https://www.googleapis.com/auth/user.gender.read https://www.googleapis.com/auth/user.birthday.read
                }
                )
 
@@ -132,21 +134,45 @@ def login():
 # Route for google authorization
 @app.route('/google-login', methods=['GET', 'POST'])
 def googleLogin():
-    return oauth.myApp.authorize_redirect(redirect_uri=url_for("googleCallback", _external=True))
+    #print("Session Before Authorize Redirect:", session)
+    
+    session.clear()
+    print("Session After Clearing:", session)
+
+
+    #print("Session After Authorize Redirect:", session)
+    redirect_uri = url_for('googleCallback', _external=True)
+    return oauth.myApp.authorize_redirect(redirect_uri)
+
 
 # Route for google callback
 @app.route('/google-sign-in', methods=['GET', 'POST'])
 def googleCallback():
-    print("Session State Before OAuth:", session.get('state'))
+
+    #print("Session Before OAuth Request:", session)
+    #print("Session State After OAuth:", session.get('state'))
     #handles exchange of OAuth provider for an access token
     token = oauth.myApp.authorize_access_token()
-    session["user"] = token
+    user_info = oauth.myApp.parse_id_token(token)
+    session['user'] = user_info
+
+    try:
+        # Adding leeway for token validation (e.g., 120 seconds to account for time differences)
+        user_info = oauth.myApp.parse_id_token(token, leeway=120)
+        session['user'] = user_info
+    except ExpiredTokenError:
+        print("The token has expired")
+        return redirect(url_for('googleLogin'))  # Redirect to login if token is expired
+    except JoseError as e:
+        print(f"JoseError: {e}")
+        return redirect(url_for('googleLogin'))  # Redirect in case of any other token issues
 
     hashed_password = bcrypt.generate_password_hash(google_password).decode('utf-8')
 
-        # Debugging state and token
+    # Debugging state and token
     print("Session State After OAuth:", session.get('state'))
     print("OAuth Token:", token)
+
 
     user_info = session.get('user')
     email = user_info['userinfo']['email']
