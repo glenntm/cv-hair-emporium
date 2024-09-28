@@ -15,6 +15,8 @@ from authlib.integrations.flask_client import OAuth
 from authlib.jose import jwt, JoseError
 from authlib.jose.errors import ExpiredTokenError
 import json
+import os
+import uuid
 
 
 app = Flask(__name__)
@@ -139,33 +141,37 @@ def googleLogin():
     session.clear()
     print("Session After Clearing:", session)
 
+    # Generate a unique nonce for this session and store it
+    nonce = str(uuid.uuid4())
+    session['nonce'] = nonce
+
 
     #print("Session After Authorize Redirect:", session)
     redirect_uri = url_for('googleCallback', _external=True)
-    return oauth.myApp.authorize_redirect(redirect_uri)
+    return oauth.myApp.authorize_redirect(redirect_uri, nonce=nonce)
 
 
 # Route for google callback
 @app.route('/google-sign-in', methods=['GET', 'POST'])
 def googleCallback():
+    # Retrieve the nonce from the session
+    nonce = session.get('nonce')
+    if not nonce:
+        return redirect(url_for('googleLogin'))  # Redirect to login if nonce is missing
 
-    #print("Session Before OAuth Request:", session)
-    #print("Session State After OAuth:", session.get('state'))
-    #handles exchange of OAuth provider for an access token
+    # Exchange the authorization code for an access token
     token = oauth.myApp.authorize_access_token()
-    user_info = oauth.myApp.parse_id_token(token)
-    session['user'] = user_info
 
     try:
-        # Adding leeway for token validation (e.g., 120 seconds to account for time differences)
-        user_info = oauth.myApp.parse_id_token(token, leeway=120)
+        # Parse the ID token and validate it with the stored nonce
+        user_info = oauth.myApp.parse_id_token(token, nonce=nonce, leeway=120)
         session['user'] = user_info
     except ExpiredTokenError:
         print("The token has expired")
-        return redirect(url_for('googleLogin'))  # Redirect to login if token is expired
+        return redirect(url_for('googleLogin'))  # Redirect if token is expired
     except JoseError as e:
         print(f"JoseError: {e}")
-        return redirect(url_for('googleLogin'))  # Redirect in case of any other token issues
+        return redirect(url_for('googleLogin'))  # Redirect for other token issues
 
     hashed_password = bcrypt.generate_password_hash(google_password).decode('utf-8')
 
@@ -173,12 +179,11 @@ def googleCallback():
     print("Session State After OAuth:", session.get('state'))
     print("OAuth Token:", token)
 
-
     user_info = session.get('user')
-    email = user_info['userinfo']['email']
-    first_name = user_info['userinfo']['given_name']
-    last_name = user_info['userinfo']['family_name']
-    
+    email = user_info['email']  # Correct the key access for email
+    first_name = user_info['given_name']
+    last_name = user_info['family_name']
+
     # Check if user already exists in the database
     user = User.query.filter_by(email=email).first()
 
@@ -192,7 +197,8 @@ def googleCallback():
         user.first_name = first_name
         user.last_name = last_name
         db.session.commit()
-
+    
+    login_user(user)
     return redirect(url_for("user_dashboard"))
 
 
@@ -236,7 +242,7 @@ def user_dashboard():
         first_name = None
     print(session.get('user'))
 
-    return render_template('user_dashboard.html', session=session.get("user"), sessionType=session.get("user"), first_name=first_name) #pretty=json.dumps(session.get("user"), indent=4))
+    return render_template('user_dashboard.html', session=session.get("user"), sessionType=session.get("user"), first_name=first_name)
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
