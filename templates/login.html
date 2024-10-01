@@ -20,5 +20,9 @@
     {% endfor %}
   {% endif %}
 {% endwith %}
+<a href="{{ url_for('googleLogin') }}">
+  <button type="button" class="login-with-google-btn" >Sign in with Google</button>
+</a>
+<br>
 <a href="{{ url_for('register') }}">Don't have an account? Sign up</a>
 {% endblock %}

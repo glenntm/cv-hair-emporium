@@ -192,6 +192,7 @@ def googleCallback():
         new_user = User(email=email, first_name=first_name, last_name=last_name, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
+        user = new_user
     else:
         # Optionally update existing user details
         user.first_name = first_name
