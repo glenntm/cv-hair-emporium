@@ -252,6 +252,11 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+@app.route('/appointment-confirmed', methods=['GET', 'POST'])
+def confirmAppt():
+    return render_template('confirmAppt.html')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
