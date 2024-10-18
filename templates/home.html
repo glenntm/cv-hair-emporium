@@ -165,6 +165,33 @@
             <a aria-label="read more reviews" href="" class="cs-button-solid">Read More</a>
         </div>
     </section>
-                                
+
+    <div>{{cal_url}}</div>
+
+    <ul>
+        {% for email in emails %}
+            <li>{{ email }}</li>
+        {% endfor %}
+    </ul>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Event Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+                <tr>
+                    <td>{{ appointment.bookingFieldsResponses.email }}</td>
+                    <td>{{ appointment.status }}</td>
+                    <td>{{ appointment.eventType.slug }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
                                 
 {% endblock %}

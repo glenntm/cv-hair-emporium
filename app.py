@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
-from secret import database_username, database_secret, databse_name, databse_password, google_client_ID, google_client_secret, flask_secret,google_password
+from secret import database_username, database_secret, databse_name, databse_password, google_client_ID, google_client_secret, flask_secret,google_password, cal_bearer_token
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, Form
 from wtforms.validators import InputRequired,Length, ValidationError,DataRequired, Email
@@ -17,6 +17,7 @@ from authlib.jose.errors import ExpiredTokenError
 import json
 import os
 import uuid
+import requests
 
 
 app = Flask(__name__)
@@ -84,10 +85,25 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=128)], render_kw={"placeholder": "Password"} )
     submit = SubmitField('Login')
 
+#api info for cal.com bookings
+cal_url = "https://api.cal.com/v2/bookings"
+
+headers = {
+    "cal-api-version": "2024-08-13",
+    "Authorization": f"{cal_bearer_token}"
+}
+
+response = requests.request("GET", cal_url, headers=headers)
+
+#parse the json
+cal_json = response.json()
+
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    appointments = cal_json['data']
+
+    return render_template('home.html', cal_url = response.text, appointments=appointments)
 
 @app.route('/book', methods=['GET', 'POST'])
 def book():
@@ -243,7 +259,7 @@ def user_dashboard():
         first_name = None
     print(session.get('user'))
 
-    return render_template('user_dashboard.html', session=session.get("user"), sessionType=session.get("user"), first_name=first_name)
+    return render_template('user_dashboard.html', session=session.get("user"), sessionType=session.get("user"), first_name=first_name, cal_response = response.text)
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
@@ -255,6 +271,7 @@ def logout():
 @app.route('/appointment-confirmed', methods=['GET', 'POST'])
 def confirmAppt():
     return render_template('confirmAppt.html')
+
 
 
 
