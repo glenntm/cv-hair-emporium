@@ -251,6 +251,16 @@ def register():
 @app.route('/user_dashboard', methods=['GET', 'POST'])
 @login_required
 def user_dashboard():
+    cal_info = cal_json['data']
+    google_email=session.get("user")['email']
+    matching_emails = []
+    
+ # Loop through cal json and collect all matches based on email
+    for item in cal_info:
+        if 'bookingFieldsResponses' in item and 'email' in item['bookingFieldsResponses']:
+            if item['bookingFieldsResponses']['email'] == google_email:
+                matching_emails.append(item['bookingFieldsResponses']['email'])
+    
     #user JSON
     user = session.get('user')
     if user is not None:
@@ -259,7 +269,7 @@ def user_dashboard():
         first_name = None
     print(session.get('user'))
 
-    return render_template('user_dashboard.html', session=session.get("user"), sessionType=session.get("user"), first_name=first_name, cal_response = response.text)
+    return render_template('user_dashboard.html', google_email=session.get("user")['email'], cal_emails=matching_emails, sessionType=session.get("user"), first_name=first_name, cal_response = response.text)
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required

@@ -177,17 +177,23 @@
     <table border="1">
         <thead>
             <tr>
+                <th>Name</th>
                 <th>Email</th>
                 <th>Status</th>
                 <th>Event Type</th>
+                <th>Duration</th>
+                <th>Start Date</th>
             </tr>
         </thead>
         <tbody>
             {% for appointment in appointments %}
                 <tr>
+                    <td>{{ appointment.bookingFieldsResponses.name }}</td>
                     <td>{{ appointment.bookingFieldsResponses.email }}</td>
                     <td>{{ appointment.status }}</td>
                     <td>{{ appointment.eventType.slug }}</td>
+                    <td>{{ appointment.duration }} minutes</td>
+                    <td>{{ appointment.start }} </td>
                 </tr>
             {% endfor %}
         </tbody>
