@@ -104,7 +104,7 @@ def home():
     appointments = cal_json['data']
 
     return render_template('home.html', cal_url = response.text, appointments=appointments)
-
+'''
 @app.route('/book', methods=['GET', 'POST'])
 def book():
     if request.method == 'POST':
@@ -117,10 +117,10 @@ def book():
         appointments.append(appointment)
         return redirect(url_for('home'))
     return render_template('book.html')
-
+'''
 @app.route('/gallery')
 def gallery():
-    return render_template('gallery.html', gallery_items=gallery_items)
+    return render_template('gallery.html')
 
 @app.route('/reviews', methods=['GET', 'POST'])
 def reviews_page():
