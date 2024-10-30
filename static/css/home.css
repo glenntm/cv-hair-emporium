@@ -255,7 +255,7 @@ h2 {
         /* 12px - 20px */
         margin-right: clamp(0.75rem, 3vw, 1.25rem);
         border-radius: 50%;
-        border: 1px solid var(--primary);
+        border: 1px solid rgb(174, 210, 255); /*var(--primary);*/
         display: flex;
         justify-content: center;
         align-items: center;
@@ -265,6 +265,7 @@ h2 {
     #stats-316 .cs-icon {
         width: 2.5rem;
         height: auto;
+        color: white;
     }
     #stats-316 .cs-flex-group {
         display: flex;
