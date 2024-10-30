@@ -2,7 +2,7 @@
 
 :root {
     /* Add these styles to your global stylesheet, which is used across all site pages. You only need to do this once. All elements in the library derive their variables and base styles from this central sheet, simplifying site-wide edits. For instance, if you want to modify how your h2's appear across the site, you just update it once in the global styles, and the changes apply everywhere. */
-    --primary: #ff6a3e;
+    --primary: rgb(148, 0, 255);
     --primaryLight: #ffba43;
     --secondary: #ffba43;
     --secondaryLight: #ffba43;
@@ -32,6 +32,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    
 }
 
 *, *:before, *:after {
@@ -85,7 +86,7 @@ header {
       width: 100%;
       /* prevents padding from affecting height and width */
       box-sizing: border-box;
-      background-color: #fff;
+      background-color: rgb(39, 0, 93); /* #fff; */
       box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
       /*position: fixed;
       z-index: 10000;*/
@@ -775,6 +776,9 @@ header {
 <---          Footer            -->
 <--- -------------------------- -*/
 
+ footer {
+  background-color: rgb(39, 0, 93);
+ }
 /* Mobile - 360px */
 @media only screen and (min-width: 0rem) {
     #footer-1391 {

@@ -226,7 +226,7 @@ h2 {
 @media only screen and (min-width: 0rem) {
     #stats-316 {
         padding: var(--sectionPadding);
-        background-color: #1a1a1a;
+        background-color: rgb(39, 0, 93); /* #1a1a1a; */
     }
     #stats-316 .cs-card-group {
         width: 100%;
