@@ -222,11 +222,12 @@ h2 {
 <---           Stats            -->
 <--- -------------------------- -*/
 
+
 /* Mobile - 360px */
 @media only screen and (min-width: 0rem) {
     #stats-316 {
         padding: var(--sectionPadding);
-        background-color: rgb(39, 0, 93); /* #1a1a1a; */
+        background-color: rgb(174, 210, 255); /* #1a1a1a; */
     }
     #stats-316 .cs-card-group {
         width: 100%;
@@ -255,7 +256,7 @@ h2 {
         /* 12px - 20px */
         margin-right: clamp(0.75rem, 3vw, 1.25rem);
         border-radius: 50%;
-        border: 1px solid rgb(174, 210, 255); /*var(--primary);*/
+        border: 1px solid rgb(0, 0, 0); /*var(--primary);*/
         display: flex;
         justify-content: center;
         align-items: center;
@@ -265,7 +266,6 @@ h2 {
     #stats-316 .cs-icon {
         width: 2.5rem;
         height: auto;
-        color: white;
     }
     #stats-316 .cs-flex-group {
         display: flex;

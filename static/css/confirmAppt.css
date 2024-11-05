@@ -109,7 +109,7 @@
       font-weight: 700;
       text-align: center;
       margin: 0;
-      color: #1a1a1a;
+      color: #ffffff;
       min-width: 12.5rem;
       padding: 0 1.5rem;
       background-color: var(--primary);
@@ -137,7 +137,7 @@
       width: 100%;
     }
     #hero-1426 .cs-button1 {
-      background-color: var(--secondary);
+      background-color: var(--primary);
     }
   }
                                   
