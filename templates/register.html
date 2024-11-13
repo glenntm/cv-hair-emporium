@@ -2,6 +2,54 @@
 {% block content %}
 <h1>Register</h1>
 
+<!-- ============================================ -->
+<!--                   Contact                    -->
+<!-- ============================================ -->
+
+<section id="contact-1525">
+    <div class="cs-container">
+        <div class="cs-content">
+            <span class="cs-topper">Get In Touch</span>
+            <h2 class="cs-title">Create an Account with us!</h2>
+        </div>
+        <!--Form-->
+        <form class="cs-form" id="cs-form-1525" name="Account Registration" method="post" action="{{ url_for('register') }}">
+            {{ form.hidden_tag() }}
+
+            <label class="cs-label form-group">
+                {{ form.first_name.label }} 
+                {% if form.first_name.errors %}
+                <div class="text-danger">{{ form.first_name.errors[0] }}</div>
+                {% endif %}
+                <input class="cs-input" required type="text" id="name-1525" name="first name" placeholder="First Name">
+            </label>
+            <label class="cs-label form-group">
+                {{ form.last_name.label }} 
+                {% if form.last_name.errors %}
+                    <div class="text-danger">{{ form.last_name.errors[0] }}</div>
+                {% endif %}
+                <input class="cs-input" required type="text" id="name-1525" name="last name" placeholder="Last Name">
+            </label>
+            <label class="cs-label form-group">
+                {{ form.email.label }} 
+                {% if form.email.errors %}
+                    <div class="text-danger">{{ form.email.errors[0] }}</div>
+                {% endif %}
+                <input class="cs-input" required type="text" id="email-1525" name="email" placeholder="Email">
+            </label>
+            <br>
+            <label class="cs-label form-group">
+                {{ form.password.label }} 
+                {% if form.password.errors %}
+                    <div class="text-danger">{{ form.password.errors[0] }}</div>
+                {% endif %}
+                <input class="cs-input" required type="text" id="password-1525" name="passord" placeholder="Password">
+            </label>
+        </form>
+    </div>
+</section>
+                                
+
 <form method="POST" action="{{ url_for('register') }}">
     {{ form.hidden_tag() }}
 
