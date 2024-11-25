@@ -188,10 +188,10 @@
       left: 0;
       z-index: -1;
       transition: width 0.3s;
-  }
+  } 
   #contact-1388 .cs-button-solid:hover {
       color: var(--primary);
-  }
+  } 
   #contact-1388 .cs-button-solid:hover:before {
       width: 100%;
   }
@@ -203,7 +203,7 @@
   #contact-1388 .cs-submit:hover {
       color: #fff;
       cursor: pointer;
-  }
+  } 
 }
 /* Tablet - 768px */
 @media only screen and (min-width: 48rem) {

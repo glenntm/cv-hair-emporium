@@ -239,8 +239,11 @@ def register():
         try:
             db.session.add(new_user)
             db.session.commit()
+            
+            #logs user in
+            login_user(new_user)
             flash('Registration successful. You can now log in.', 'success')
-            return redirect(url_for('login'))
+            return redirect(url_for('user_dashboard'))
         except Exception as e:
             db.session.rollback()  # rollback in case of error
             flash(f"An error occurred: {e}", 'danger')
@@ -251,25 +254,43 @@ def register():
 @app.route('/user_dashboard', methods=['GET', 'POST'])
 @login_required
 def user_dashboard():
+    # Check if 'user' exists in session
+    user = session.get('user')
+    if user:
+        # Google SSO email
+        email = user.get('email')  # Get the email from Google session
+    else:
+        # Fallback to the email captured during registration
+        # Assuming 'current_user' contains the registered user's details
+        email = current_user.email  # Use your ORM model or context to fetch
+
+    # Debugging print
+    print(f"Email used: {email}")
+
     cal_info = cal_json['data']
-    google_email=session.get("user")['email']
     matching_emails = []
-    
- # Loop through cal json and collect all matches based on email
+
+    # Loop through cal_json and collect all matches based on email
     for item in cal_info:
         if 'bookingFieldsResponses' in item and 'email' in item['bookingFieldsResponses']:
-            if item['bookingFieldsResponses']['email'] == google_email:
+            if item['bookingFieldsResponses']['email'] == email:
                 matching_emails.append(item['bookingFieldsResponses']['email'])
-    
-    #user JSON
-    user = session.get('user')
-    if user is not None:
-        first_name = user.get('given_name')
-    else:
-        first_name = None
-    print(session.get('user'))
 
-    return render_template('user_dashboard.html', google_email=session.get("user")['email'], cal_emails=matching_emails, sessionType=session.get("user"), first_name=first_name, cal_response = response.text)
+    # Get user's first name
+    first_name = user.get('given_name') if user else current_user.first_name
+
+    # Debugging print
+    print(f"Session user: {session.get('user')}")
+
+    return render_template(
+        'user_dashboard.html',
+        google_email=email,
+        cal_emails=matching_emails,
+        sessionType=user,
+        first_name=first_name,
+        cal_response=response.text
+    )
+
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required

@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/user_dashboard.css') }}">
+
 <h1>Dashboard - You are logged in {{first_name}}</h1>
 
 {% if session %}
@@ -9,6 +11,9 @@
 <div>Google Signed In</div>
 <h1>{{google_email}}</h1>
 <h3>{{cal_emails}}</h3>
+<div class="cs-button-group">
+    <a href="{{ url_for('logout') }}" class="cs-button-solid cs-button1">Sign Out</a>
+</div>
 <h1>CAL RESPONSE</h1>
 <div>{{cal_response}}</div>
 {% else %}
