@@ -5,26 +5,39 @@
 <section id="contact-1388">
   <div class="cs-container">
       <!--Form-->
-      <form class="cs-form" id="cs-form-1388" name="Contact Form" method="post">
-          <h3 class="cs-h3">Make Appointment</h3>
-          <label class="cs-label">
-              Name
-              <input class="cs-input" required type="text" id="name-1388" name="name" placeholder="Name">
-          </label>
+      <form class="cs-form" id="cs-form-1388" name="Contact Form" method="POST" action="{{ url_for('login') }}">
+        {{ form.hidden_tag() }}
+          <h3 class="cs-h3">Login</h3>
           <label class="cs-label cs-email">
-              Email
-              <input class="cs-input" required type="email" id="email-1388" name="email" placeholder="Email">
+            {{ form.email.label }}
+            {% if form.email.errors %}
+            <div class="text-danger">{{ form.email.errors[0] }}</div>
+            {% endif %}
+            {{ form.email(class="cs-input") }}
           </label>
-          <label class="cs-label cs-phone">
-              Phone
-              <input class="cs-input" required type="number" id="phone-1388" name="phone" placeholder="Phone">
+          <label class="cs-label form-group">
+            {{ form.password.label }} 
+            {% if form.password.errors %}
+                <div class="text-danger">{{ form.password.errors[0] }}</div>
+            {% endif %}
+            {{ form.password(class="cs-input form-control") }}
           </label>
-          <label class="cs-label">
-              Message
-              <textarea class="cs-input cs-textarea" required name="Message" id="message-1388" placeholder="Write message..."></textarea>
-          </label>
-          <button class="cs-button-solid cs-submit" type="submit">Send Message</button>
+          <div class="login-buttons">
+            <button class="cs-button-solid cs-submit" type="submit">{{ form.submit.label }}</button>
+            <br>
+            <a href="{{ url_for('googleLogin') }}">
+              <button type="button" class="login-with-google-btn" >Sign in with Google</button>
+            </a>
+          </div>
+          <br>
+          <div class="registration-info">
+            <p>Don't have an account?</p>
+            <a class="registration-link" href="{{ url_for('register') }}">Register</a>
+          </div>
+
       </form>
+
+
   </div>
 </section>
         
@@ -46,9 +59,7 @@
     {% endfor %}
   {% endif %}
 {% endwith %}
-<a href="{{ url_for('googleLogin') }}">
-  <button type="button" class="login-with-google-btn" >Sign in with Google</button>
-</a>
+
 <br>
 <a href="{{ url_for('register') }}">Don't have an account? Sign up</a>
 {% endblock %}
