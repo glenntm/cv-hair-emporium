@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
-from secret import database_username, database_secret, databse_name, databse_password, google_client_ID, google_client_secret, flask_secret,google_password, cal_bearer_token
+from secret import database_username, database_secret, databse_name, databse_password, google_client_ID, google_client_secret, flask_secret,google_password, cal_bearer_token, gmail_password
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, Form
 from wtforms.validators import InputRequired,Length, ValidationError,DataRequired, Email
@@ -18,12 +18,28 @@ import json
 import os
 import uuid
 import requests
+from flask_mail import Mail, Message
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 
 
 app = Flask(__name__)
 json = FlaskJSON(app)
 bcrypt = Bcrypt(app)
+mail = Mail(app) # instantiate the mail class 
 
+# configuration of mail 
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USERNAME'] = 'danotoriousg@gmail.com'
+app.config['MAIL_PASSWORD'] = gmail_password
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+mail = Mail(app) 
+
+
+#database setup
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{database_username}:{databse_password}@localhost:5432/{databse_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = f'{database_secret}'
@@ -99,25 +115,23 @@ response = requests.request("GET", cal_url, headers=headers)
 cal_json = response.json()
 
 
+@app.route("/reset-password") 
+def index(): 
+   msg = Message( 
+                'Hello', 
+                sender ='danotoriousg@gmail.com', 
+                recipients = ['glenntm1@live.com'] 
+               ) 
+   msg.body = 'Hello Flask message sent from Flask-Mail'
+   mail.send(msg) 
+   return 'Sent'
+
 @app.route('/')
 def home():
     appointments = cal_json['data']
 
     return render_template('home.html', cal_url = response.text, appointments=appointments)
-'''
-@app.route('/book', methods=['GET', 'POST'])
-def book():
-    if request.method == 'POST':
-        appointment = {
-            "name": request.form['name'],
-            "service": request.form['service'],
-            "date": request.form['date'],
-            "time": request.form['time']
-        }
-        appointments.append(appointment)
-        return redirect(url_for('home'))
-    return render_template('book.html')
-'''
+
 @app.route('/gallery')
 def gallery():
     return render_template('gallery.html')

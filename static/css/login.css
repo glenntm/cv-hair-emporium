@@ -305,6 +305,9 @@
     margin: auto;
 }
 
-.registration-link {
-    margin: auto;
+.registration-info {
+    text-align: center; /* Centers the text content inside the div */
+    margin: 1rem auto;  /* Centers the div horizontally and adds spacing */
+    display: block;     /* Ensures the div behaves like a block element */
+    width: 100%;        /* Optional: Adjust width if needed */
 }
