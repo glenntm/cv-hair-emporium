@@ -21,6 +21,8 @@ import requests
 from flask_mail import Mail, Message
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from datetime import datetime, timedelta
+import secrets 
 
 
 
@@ -115,16 +117,70 @@ response = requests.request("GET", cal_url, headers=headers)
 cal_json = response.json()
 
 
-@app.route("/reset-password") 
-def index(): 
-   msg = Message( 
+@app.route("/forgot-password", methods=['GET', 'POST']) 
+def forgot_password(): 
+   form = LoginForm()
+   if request.method == 'POST':
+        email = request.form['email']
+        user = User.query.filter_by(email=email).first()
+        if user:
+            # Generate a secure token
+            token = secrets.token_hex(32)
+            user.reset_token = token
+            user.token_expiration = datetime.now() + timedelta(hours=1)
+            db.session.commit()
+
+            # Send the reset email
+            reset_url = url_for('reset_password', token=token, _external=True)
+            msg = Message('Password Reset Request',
+            sender ='danotoriousg@gmail.com', 
+                          recipients=[email],
+                          body=f'Click the link to reset your password: {reset_url}')
+            mail.send(msg)
+            flash('Password reset email sent. Check your inbox.', 'info')
+            return render_template('gallery.html')
+        else:
+            flash('Email not found.', 'warning')
+            return render_template('forgotPw.html', form=form)
+   #below sends gmail message
+   '''
+      msg = Message( 
                 'Hello', 
                 sender ='danotoriousg@gmail.com', 
                 recipients = ['glenntm1@live.com'] 
                ) 
    msg.body = 'Hello Flask message sent from Flask-Mail'
    mail.send(msg) 
-   return 'Sent'
+   flash('Sent')
+   '''
+   return render_template('forgotPw.html', form=form)
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    form = LoginForm()
+    user = User.query.filter_by(reset_token=token).first()
+    if not user or user.token_expiration < datetime.now():
+        return "Token is invalid or expired."
+    
+    if request.method == 'POST':
+        new_password = request.form['password']
+        print(f"New password: {new_password}")  # Debugging
+        user.password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        print(f"New hashed password: {user.password}")  # Debugging
+        user.reset_token = None
+        user.token_expiration = None
+        
+        try:
+            db.session.commit()
+            print("Password hash updated successfully.")
+        except Exception as e:
+            db.session.rollback()  # Rollback in case of an error
+            print(f"Error updating password: {e}")
+            return "An error occurred while updating your password."
+
+        return "Password successfully reset."   
+    
+    return render_template('resetPw.html', form=form, token=token)
 
 @app.route('/')
 def home():
@@ -245,9 +301,9 @@ def register():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         new_user = User(
             email=form.email.data,
-            password=hashed_password,
             first_name=form.first_name.data,
-            last_name=form.last_name.data
+            last_name=form.last_name.data,
+            password=hashed_password
         )
 
         try:

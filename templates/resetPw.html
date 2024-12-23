@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- ============================================ -->
+<!--             Reset Paassword                  -->
+<!-- ============================================ -->
+
+<section id="contact-1388">
+    <div class="cs-container">
+        <!--Form-->
+        <form class="cs-form" id="cs-form-1388" name="Contact Form" method="POST" action="{{ url_for('reset_password', token=token) }}">
+          {{ form.hidden_tag() }}
+            <h6 class="cs-h3">Please enter your new Password</h6>
+            <label class="cs-label cs-password">
+              {{ form.password.label }}
+              <input class="cs-input form-control" required type="password" id="password-1525" name="password" placeholder="Password">
+              {% if form.password.errors %}
+              <div class="text-danger">{{ form.password.errors[0] }}</div>
+              {% endif %}
+            </label>
+            <button class="cs-button-solid cs-submit" type="submit">Reset Password</button>
+            <div class="registration-info">
+              <p>Don't have an account?</p>
+              <a class="registration-link" href="{{ url_for('register') }}">Register</a>
+            </div>
+        </form>
+  
+  
+    </div>
+  </section>                         
+
+<a href="{{ url_for('login') }}">Already have an account? Login</a>
+{% endblock %}

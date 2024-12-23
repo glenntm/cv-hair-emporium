@@ -39,13 +39,7 @@
 
   </div>
 </section>
-        
-<form method="POST" action="{{ url_for('login') }}">
-    {{form.hidden_tag() }}
-    {{form.email}}
-    {{form.password}}
-    {{form.submit}}
-</form>
+      
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     {% for category, message in messages %}
@@ -59,6 +53,4 @@
   {% endif %}
 {% endwith %}
 
-<br>
-<a href="{{ url_for('register') }}">Don't have an account? Sign up</a>
 {% endblock %}
