@@ -2,10 +2,10 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
-from secret import database_username, database_secret, databse_name, databse_password, google_client_ID, google_client_secret, flask_secret,google_password, cal_bearer_token, gmail_password
+from secret import database_username, database_secret, databse_name, databse_password, google_client_ID, google_client_secret, flask_secret,google_password, cal_bearer_token, gmail_password, crsf_secret
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, Form
-from wtforms.validators import InputRequired,Length, ValidationError,DataRequired, Email
+from wtforms import StringField, PasswordField, SubmitField, Form, validators
+from wtforms.validators import InputRequired,Length, ValidationError,DataRequired, Email, length, Regexp
 from models import User, db, connect_db
 from flask_bcrypt import Bcrypt
 import psycopg2
@@ -30,6 +30,10 @@ app = Flask(__name__)
 json = FlaskJSON(app)
 bcrypt = Bcrypt(app)
 mail = Mail(app) # instantiate the mail class 
+
+#for CSRF token
+app.config['SECRET_KEY'] = crsf_secret
+
 
 # configuration of mail 
 app.config['MAIL_SERVER']='smtp.gmail.com'
@@ -66,6 +70,7 @@ login_manager.login_view='login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+#for google sso setup
 appConf = {
     "OAUTH2_CLIENT_ID": f"{google_client_ID}",
     "OAUTH2_CLIENT_SECRET": f"{google_client_secret}",
@@ -115,6 +120,25 @@ response = requests.request("GET", cal_url, headers=headers)
 
 #parse the json
 cal_json = response.json()
+
+#Classes for password requirements
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('New Password', 
+                             validators=[
+                                 DataRequired(),
+                                 Length(min=8),
+                                 Regexp(r'^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])', message="Password must contain at least one uppercase letter, one number, and one special character.")
+                             ])
+    submit = SubmitField('Reset Password')
+
+class RegistrationFormPassword(FlaskForm):
+    password = PasswordField('Password', [
+        validators.DataRequired(),
+        validators.Length(min=8, message="Password must be at least 8 characters long."),
+        validators.Regexp(r'^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])',
+                          message="Password must include at least one uppercase letter, one number, and one special character.")
+    ])
+    submit = SubmitField('Register')
 
 
 @app.route("/forgot-password", methods=['GET', 'POST']) 

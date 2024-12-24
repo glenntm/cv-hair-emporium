@@ -13,7 +13,8 @@
             <h6 class="cs-h3">Please enter your new Password</h6>
             <label class="cs-label cs-password">
               {{ form.password.label }}
-              <input class="cs-input form-control" required type="password" id="password-1525" name="password" placeholder="Password">
+              <input class="cs-input form-control" required type="password" id="password-1525" name="password" placeholder="Password" pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" 
+              title="Password must be at least 8 characters, include at least one uppercase letter, one number, and one special character.">
               {% if form.password.errors %}
               <div class="text-danger">{{ form.password.errors[0] }}</div>
               {% endif %}

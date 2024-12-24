@@ -102,3 +102,18 @@ function onSuccess(googleUser) {
     }
   }
   Dropbox.embed(options, element);
+
+
+  //Password requirements
+  const passwordInput = document.getElementById('password-1525');
+  const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+  passwordInput.addEventListener('input', function() {
+    if (passwordPattern.test(passwordInput.value)) {
+      passwordInput.setCustomValidity('');
+      passwordInput.style.borderColor = 'green';
+    } else {
+      passwordInput.setCustomValidity('Password must be at least 8 characters, include at least one uppercase letter, one number, and one special character.');
+      passwordInput.style.borderColor = 'red';
+    }
+  });

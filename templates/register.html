@@ -8,89 +8,62 @@
 <section id="contact-1525">
     <div class="cs-container">
         <div class="cs-content">
-            <span class="cs-topper">Registration</span>
-            <h2 class="cs-title">Create an account with us!</h2>
+            <span class="cs-topper">Registration Form</span>
+            <h2 class="cs-title">Create an account with CV Hair Emporium</h2>
         </div>
         <!--Form-->
         <form class="cs-form" id="cs-form-1525" name="Account Registration" method="POST" action="{{ url_for('register') }}">
             {{ form.hidden_tag() }}
-
-            <label class="cs-label form-group form-control">
-                {{ form.first_name.label }} 
+        
+            <label class="cs-label form-group">
+                {{ form.first_name.label }}
                 {% if form.first_name.errors %}
                 <div class="text-danger">{{ form.first_name.errors[0] }}</div>
                 {% endif %}
-                <input class="cs-input form-control" required type="text" id="name-1525" name="first_name" placeholder="First Name">
+                {{ form.first_name(class="cs-input form-control") }}
             </label>
-            <br>
+        
             <label class="cs-label form-group">
-                {{ form.last_name.label }} 
+                {{ form.last_name.label }}
                 {% if form.last_name.errors %}
-                    <div class="text-danger">{{ form.last_name.errors[0] }}</div>
+                <div class="text-danger">{{ form.last_name.errors[0] }}</div>
                 {% endif %}
-                <input class="cs-input form-control" required type="text" id="name-1525" name="last_name" placeholder="Last Name">
+                {{ form.last_name(class="cs-input form-control") }}
             </label>
-            <br>
+        
             <label class="cs-label form-group">
-                {{ form.email.label }} 
+                {{ form.email.label }}
                 {% if form.email.errors %}
-                    <div class="text-danger">{{ form.email.errors[0] }}</div>
+                <div class="text-danger">{{ form.email.errors[0] }}</div>
                 {% endif %}
-                <input class="cs-input form-control" required type="text" id="email-1525" name="email" placeholder="Email">
+                {{ form.email(class="cs-input form-control") }}
             </label>
-            <br>
+        
             <label class="cs-label form-group">
-                {{ form.password.label }} 
+                {{ form.password.label }}
                 {% if form.password.errors %}
-                    <div class="text-danger">{{ form.password.errors[0] }}</div>
+                <div class="text-danger">{{ form.password.errors[0] }}</div>
                 {% endif %}
-                <input class="cs-input form-control" required type="password" id="password-1525" name="password" placeholder="Password">
-            </label>
+                <input 
+                class="cs-input form-control" 
+                required 
+                type="password" 
+                id="password-1525" 
+                name="password" 
+                placeholder="Password"
+                pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                title="Password must be at least 8 characters long, include at least one uppercase letter, one number, and one special character."
+                >   
+            </label>   
+            <div class="registration-buttons">
+                <button class="cs-button-solid cs-submit form-control" type="submit">{{ form.submit.label }}</button>
+                <br>
+                <a href="{{ url_for('googleLogin') }}">
+                    <button type="button" class="login-with-google-btn" >Sign up with Google</button>
+                </a>
+            </div> 
+        </form> 
+    </div> 
 
-            <button class="cs-button-solid cs-submit form-control" type="submit">{{ form.submit.label }}</button>
-
-        </form>
-    </div>
 </section>
-                                
-
-<form method="POST" action="{{ url_for('register') }}">
-    {{ form.hidden_tag() }}
-
-    <div class="form-group">
-        {{ form.first_name.label }} 
-        {{ form.first_name(class="form-control") }}
-        {% if form.first_name.errors %}
-            <div class="text-danger">{{ form.first_name.errors[0] }}</div>
-        {% endif %}
-    </div>
-
-    <div class="form-group">
-        {{ form.last_name.label }} 
-        {{ form.last_name(class="form-control") }}
-        {% if form.last_name.errors %}
-            <div class="text-danger">{{ form.last_name.errors[0] }}</div>
-        {% endif %}
-    </div>
-
-    <div class="form-group">
-        {{ form.email.label }} 
-        {{ form.email(class="form-control") }}
-        {% if form.email.errors %}
-            <div class="text-danger">{{ form.email.errors[0] }}</div>
-        {% endif %}
-    </div>
-
-    <div class="form-group">
-        {{ form.password.label }} 
-        {{ form.password(class="form-control") }}
-        {% if form.password.errors %}
-            <div class="text-danger">{{ form.password.errors[0] }}</div>
-        {% endif %}
-    </div>
-
-    <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
-</form>
-
-<a href="{{ url_for('login') }}">Already have an account? Login</a>
 {% endblock %}

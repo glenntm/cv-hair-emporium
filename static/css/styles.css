@@ -24,9 +24,12 @@ body {
     font-family: "Archivo", sans-serif;
 }
 
-main {
-    margin-top: 10rem;
+@media only screen and (min-width: 100px) {
+  main {
+    margin-top: 4rem;
+  }
 }
+
 
 header {
     position: sticky;

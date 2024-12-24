@@ -10,7 +10,9 @@
 }
 
 
-
+.registration-buttons {
+  margin: auto;
+}
 /* Mobile - 360px */
 @media only screen and (min-width: 0rem) {
     #contact-1525 {
@@ -47,6 +49,7 @@
     }
     #contact-1525 .cs-title {
       margin: 0;
+      font-size: 1.8rem;
     }
     #contact-1525 .cs-form {
       /*width: 100%;
@@ -54,11 +57,12 @@
       display: grid;
       grid-template-columns: repeat(12, 1fr);
       gap: 0.75rem;*/
-
+      margin-top: 0.5rem;
       display: grid; 
       /*grid-template-columns: repeat(12, 1fr);
       gap: 1rem; /* Spacing between fields */
       width: 100%;
+      margin-bottom: 3.5rem;
     }
     #contact-1525 .cs-label {
       /* 14px - 16px */
@@ -75,6 +79,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
+      margin-top: 0.5rem;
   
     }
     #contact-1525 .cs-input,
@@ -169,12 +174,15 @@
       background-color: #5a67d8; /* Primary color */
       color: #fff;
       border: none;
-      border-radius: 5px;
       cursor: pointer;
       text-transform: uppercase;
       font-weight: bold;
       text-align: center;
       margin-left: 2.5rem; /* center a button */
+      width: 100%;
+      min-width: 15rem;
+      border: none;
+      margin: auto;
       margin-top: 1rem;
     }
     #contact-1525 .cs-submit:hover {
