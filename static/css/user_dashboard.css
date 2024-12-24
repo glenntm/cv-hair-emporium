@@ -46,3 +46,248 @@
 .cs-button-solid:hover {
     color: white /* Changes the text color on hover */
 }
+
+
+/*-- -------------------------- -->
+<---          Events            -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #events-1650 {
+      padding: var(--sectionPadding);
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+    #events-1650 .cs-container {
+      width: 100%;
+      max-width: 80rem;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* 16px - 20px */
+      gap: clamp(1rem, 3vw, 1.25rem);
+    }
+    #events-1650 .cs-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      /* 16px - 20px */
+      gap: clamp(1rem, 3vw, 1.25rem);
+      justify-content: center;
+    }
+    #events-1650 .cs-content {
+      width: 100%;
+      /* 400px - 752px */
+      height: clamp(25rem, 80vw, 47rem);
+      display: block;
+      position: relative;
+      max-height: 20.5rem;
+      /* 40px - 80px & 16px - 40px */
+      padding: clamp(2.5rem, 4vw, 5rem) clamp(1rem, 3vw, 2.5rem);
+    }
+    #events-1650 .cs-title {
+      color: var(--bodyTextColorWhite);
+    }
+    #events-1650 .cs-picture {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -2;
+    }
+    #events-1650 .cs-picture:before {
+      /* gradient overlay */
+      content: "";
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0) 100%);
+      opacity: 0.84;
+      position: absolute;
+      display: block;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+    #events-1650 .cs-picture img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #events-1650 .cs-card-group {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      /* 16px - 20px */
+      gap: clamp(1rem, 3vw, 1.25rem);
+    }
+    #events-1650 .cs-item {
+      list-style: none;
+      background-color: #f7f7f7;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+      text-decoration: none;
+      width: 100%;
+      /* 16px - 32px */
+      padding: clamp(1rem, 4vw, 2rem);
+      /* prevents padding from affecting height and width */
+      box-sizing: border-box;
+      display: flex;
+      align-items: flex-start;
+      /* 16px - 48px */
+      gap: clamp(1rem, 5vw, 3rem);
+    }
+    #events-1650 .cs-item:before {
+      /* background color overlay for dark mode*/
+      content: '';
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.2);
+      position: absolute;
+      display: none;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    #events-1650 .cs-date {
+      font-size: 1rem;
+      line-height: 1.2em;
+      /* 80px - 100px */
+      width: clamp(5rem, 10vw, 6.25rem);
+      height: clamp(5rem, 10vw, 6.25rem);
+      color: var(--primary);
+      background-color: #111926;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      position: relative;
+      z-index: 1;
+      flex: none;
+    }
+    #events-1650 .cs-date:before {
+      /* background color */
+      content: '';
+      width: 100%;
+      height: 100%;
+      background-color: #bababa;
+      opacity: .1;
+      position: absolute;
+      display: block;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      transition: background-color 0.3s;
+    }
+    #events-1650 .cs-date strong {
+      font-size: 1.9375rem;
+      line-height: 1.2em;
+      color: #fff;
+    }
+    #events-1650 .cs-info-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    #events-1650 .cs-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    #events-1650 .cs-h3 {
+      /* 20px - 25px */
+      font-size: clamp(1.25rem, 3vw, 1.5625rem);
+      line-height: 1.2em;
+      font-weight: 700;
+      margin: 0;
+      color: var(--headerColor);
+    }
+    #events-1650 .cs-location {
+      font-size: 1rem;
+      line-height: 1.5em;
+      color: var(--bodyTextColor);
+    }
+    #events-1650 .cs-time {
+      font-size: 1rem;
+      line-height: 1.5em;
+      margin: 0;
+      color: var(--bodyTextColor);
+      display: flex;
+      gap: 0.5rem;
+    }
+    #events-1650 .cs-button-wrapper {
+      display: flex;
+      position: relative;
+      align-items: center;
+    }
+    #events-1650 .cs-button-solid {
+      font-size: 1rem;
+      /* 46px - 56px */
+      line-height: clamp(2.875rem, 5.5vw, 3.5rem);
+      text-decoration: none;
+      font-weight: 700;
+      text-align: center;
+      color: #fff;
+      min-width: 9.375rem;
+      padding: 0 1.5rem;
+      background-color: var(--primary);
+      display: inline-block;
+      position: relative;
+      z-index: 1;
+      /* prevents padding from adding to the width */
+      box-sizing: border-box;
+    }
+    #events-1650 .cs-button-solid:before {
+      content: '';
+      position: absolute;
+      height: 100%;
+      width: 0%;
+      background: #000;
+      opacity: 1;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      transition: width .3s;
+    }
+    #events-1650 .cs-button-solid:hover:before {
+      width: 100%;
+    }
+  }
+  /* Tablet - 768px */
+  @media only screen and (min-width: 48rem) {
+    #events-1650 .cs-container {
+      flex-direction: row;
+      align-items: stretch;
+    }
+    #events-1650 .cs-content {
+      /* 284px - 413px */
+      max-width: clamp(17.75rem, 29.4vw, 25.8125rem);
+      max-height: none;
+      height: auto;
+      /* sends it to the right in the 2nd position */
+      /*order: 2;*/
+    }
+  }
+  /* Laptop - 1024px */
+  @media only screen and (min-width: 64rem) {
+    #events-1650 .cs-info-wrapper {
+      flex-direction: row;
+      justify-content: space-between;
+      /* 32px - 80px */
+      gap: clamp(2rem, 3.1vw, 5rem);
+    }
+    #events-1650 .cs-time {
+      margin: 1rem 0 0 0;
+    }
+  }

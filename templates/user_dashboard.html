@@ -4,20 +4,52 @@
 
 <h1>Dashboard - You are logged in {{first_name}}</h1>
 
-{% if session %}
-<div><pre>{{pretty}}</pre></div>
-<h2>Full JSON</h2>
-<pre>{{ sessionType | tojson(indent=4) }}</pre>
-<div>Google Signed In</div>
-<h1>{{google_email}}</h1>
-<h3>{{cal_emails}}</h3>
+<!-- ============================================ -->
+<!--                   Appointments                     -->
+<!-- ============================================ -->
+
+<section id="events-1650">
+    <div class="cs-container">
+        <div class="cs-content">
+            <picture class="cs-picture">
+                <!--Mobile Image-->
+                <source media="(max-width: 600px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/People/business-meeting.jpeg">
+                <!--Tablet and above Image-->
+                <source media="(min-width: 601px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/People/business-meeting.jpeg">
+                <img loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/People/business-meeting.jpeg" alt="busines meeting" width="522" height="609" aria-hidden="true">
+            </picture>
+            <div class="cs-text-wrapper">
+                <span class="cs-topper">Our Events</span>
+                <h2 class="cs-title">Appointment History</h2>
+            </div>
+        </div>
+        <ul class="cs-card-group">
+            {% for event in matching_events %}
+            <li class="cs-item">
+                <span class="cs-date">
+                    <strong>{{ event.day }}</strong>
+                    {{ event.month_abbreviation }} {{ event.year }}
+                </span>
+                <div class="cs-info-wrapper">
+                    <div class="cs-info">
+                        <h3 class="cs-h3">{{ event.title }}</h3>
+                        <span class="cs-location"><strong>Status:</strong> {{ event.status }}</span>
+                        <span class="cs-time">
+                            <img class="cs-icon" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/gold-clock.svg" alt="icon" width="24" height="24" loading="lazy" decoding="async">
+                            {{ event.start_time }} - {{ event.end_time }} {{event.time_zone}}
+                        </span>
+                    </div>
+                    <div class="cs-button-wrapper">
+                        <a href="{{ event.meeting_url }}" class="cs-button-solid">Book Again</a>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div> 
+</section>
+                                
 <div class="cs-button-group">
     <a href="{{ url_for('logout') }}" class="cs-button-solid cs-button1">Sign Out</a>
 </div>
-<h1>CAL RESPONSE</h1>
-<div>{{cal_response}}</div>
-{% else %}
-<p><a href="{{url_for('googleLogin')}}"></a></p>
-{% endif %}
-<a href="{{ url_for('logout') }}">Sign Out</a>
 {% endblock %}

@@ -362,16 +362,40 @@ def user_dashboard():
     print(f"Email used: {email}")
 
     cal_info = cal_json['data']
-    matching_emails = []
+    matching_events = []
 
-    # Loop through cal_json and collect all matches based on email
+    # Loop through cal_json and collect all matches based on the email in bookingFieldsResponses
     for item in cal_info:
         if 'bookingFieldsResponses' in item and 'email' in item['bookingFieldsResponses']:
-            if item['bookingFieldsResponses']['email'] == email:
-                matching_emails.append(item['bookingFieldsResponses']['email'])
+            event_email = item['bookingFieldsResponses']['email']
+            # Only add events where the attendee's email matches the logged-in user's email
+            if event_email == email:
+                # Parse the start date
+                start_time = datetime.fromisoformat(item['start'].replace('Z', '+00:00'))
+                
+                # Calculate the end time by adding the duration to the start time
+                end_time = start_time + timedelta(minutes=item['duration'])
 
-    # Get user's first name
-    first_name = user.get('given_name') if user else current_user.first_name
+                # Format the start time, end time, and other fields
+                event = {
+                    'title': item['title'].split(' between ')[0],  # Extracting the part before "between"
+                    'status': item['status'].capitalize(),  # Capitalizing the status
+                    'start': start_time,
+                    'end': end_time,
+                    'start_time': start_time.strftime('%I:%M %p'),  # 12-hour format with AM/PM
+                    'end_time': end_time.strftime('%I:%M %p'),  # End time in 12-hour format
+                    'day': start_time.day,
+                    'month_abbreviation': start_time.strftime('%b'),  # Abbreviated month (e.g., "Oct")
+                    'event_type': item['eventType']['slug'],
+                    'duration': item['duration'],
+                    'time_zone': item['hosts'][0]['timeZone'],  # Assuming timeZone is in hosts
+                    'meeting_url': item['meetingUrl'],
+                    "year": start_time.year,
+                }
+                matching_events.append(event)
+
+    # Sort the events by start time in descending order
+    matching_events.sort(key=lambda x: x['start'], reverse=True)
 
     # Debugging print
     print(f"Session user: {session.get('user')}")
@@ -379,9 +403,8 @@ def user_dashboard():
     return render_template(
         'user_dashboard.html',
         google_email=email,
-        cal_emails=matching_emails,
+        matching_events=matching_events,
         sessionType=user,
-        first_name=first_name,
         cal_response=response.text
     )
 
