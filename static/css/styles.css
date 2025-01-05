@@ -7,7 +7,7 @@
     --secondary: #AED2FF;
     --secondaryLight: #ffba43;
     --headerColor: #1a1a1a;
-    --bodyTextColor: #4e4b66;
+    --bodyTextColor: white;
     --bodyTextColorWhite: #fafbfc;
     /* 13px - 16px */
     --topperFontSize: clamp(0.8125rem, 1.6vw, 1rem);
@@ -154,7 +154,7 @@ header {
       line-height: 1.5em;
       text-decoration: none;
       margin: 0;
-      color: var(--bodyTextColor);
+      color:black;
       display: flex;
       justify-content: flex-start;
       align-items: center;
@@ -631,7 +631,7 @@ header {
       line-height: 1.5em;
       text-decoration: none;
       margin: 0;
-      color: var(--bodyTextColor);
+      color: black;
       display: flex;
       justify-content: flex-start;
       align-items: center;
@@ -779,7 +779,7 @@ header {
 <--- -------------------------- -*/
 
  footer {
-  background-color: rgb(39, 0, 93);
+  background-color: #1f1f1f;
  }
 /* Mobile - 360px */
 @media only screen and (min-width: 0rem) {

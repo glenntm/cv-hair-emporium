@@ -74,11 +74,16 @@
                                 Book Appointment
                             </a>
                         </li>
+                        <!-- Check if the user is authenticated -->
+                        {% if current_user.is_authenticated %}
                         <li class="cs-li">
-                            <a href="{{ url_for('login') }}" class="cs-li-link">
-                                Login
-                            </a>
+                            <a href="{{ url_for('logout') }}" class="cs-li-link">Logout</a>
                         </li>
+                        {% else %}
+                        <li class="cs-li">
+                            <a href="{{ url_for('login') }}" class="cs-li-link">Login</a>
+                        </li>
+                        {% endif %}
                     </ul>
                 </div>
             </nav>
