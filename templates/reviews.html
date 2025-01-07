@@ -1,19 +1,62 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Reviews</h2>
-<form method="POST" action="{{ url_for('reviews_page') }}">
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required>
-    <label for="review">Review:</label>
-    <textarea id="review" name="review" required></textarea>
-    <button type="submit">Submit Review</button>
-</form>
-<div class="reviews">
-    {% for review in reviews %}
-        <div class="review">
-            <h3>{{ review.name }}</h3>
-            <p>{{ review.review }}</p>
+<!-- ============================================ -->
+<!--                    Reviews                   -->
+<!-- ============================================ -->
+
+<section id="reviews-1641">
+    <div class="cs-container">
+        <picture class="cs-picture">
+            <!--Mobile Image-->
+            <source media="(max-width: 600px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/ecommerce/models.png">
+            <!--Tablet and above Image-->
+            <source media="(min-width: 601px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/ecommerce/models.png">
+            <img loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/ecommerce/models.png" alt="models" width="586" height="690">
+        </picture>
+        <div class="cs-content">
+            <span class="cs-topper">Reviews</span>
+            <h2 class="cs-title">What Our Clients Say</h2>
+            <ul class="cs-card-group">
+                <li class="cs-item">
+                    <picture class="cs-profile">
+                        <img src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/MISC/ecomm-headshot1.jpeg" alt="profile" width="35" height="40" loading="lazy" decoding="async" aria-hidden="true">
+                    </picture>
+                    <div class="cs-flex-group">
+                        <span class="cs-review">The fashion shop has a diverse range of sizes and styles, which is great for all body types and tastes.</span>
+                        <span class="cs-name">Katrin McWell, Forbes</span>
+                    </div>
+                </li>
+                <li class="cs-item">
+                    <picture class="cs-profile">
+                        <img src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/MISC/ecomm-headshot2.jpeg" alt="profile" width="35" height="40" loading="lazy" decoding="async" aria-hidden="true">
+                    </picture>
+                    <div class="cs-flex-group">
+                        <span class="cs-review">I am a regular at this fashion shop - their stylish clothes and accessories always keep me ahead of the trend.</span>
+                        <span class="cs-name">Madelyn George, ELLE</span>
+                    </div>
+                </li>
+                <li class="cs-item">
+                    <picture class="cs-profile">
+                        <img src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/MISC/ecomm-headshot3.jpeg" alt="profile" width="35" height="40" loading="lazy" decoding="async" aria-hidden="true">
+                    </picture>
+                    <div class="cs-flex-group">
+                        <span class="cs-review">The prices are reasonable for the high-quality products and the customer service is outstanding.</span>
+                        <span class="cs-name">Monica Johns, Cosmopolitan</span>
+                    </div>
+                </li>
+                <li class="cs-item">
+                    <picture class="cs-profile">
+                        <img src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/MISC/ecomm-headshot1.jpeg" alt="profile" width="35" height="40" loading="lazy" decoding="async" aria-hidden="true">
+                    </picture>
+                    <div class="cs-flex-group">
+                        <span class="cs-review">The fashion shop has a diverse range of sizes and styles, which is great for all body types and tastes.</span>
+                        <span class="cs-name">Katrin McWell, Forbes</span>
+                    </div>
+                </li>
+            </ul>
         </div>
-    {% endfor %}
-</div>
+    </div>
+</section>
+                                
 {% endblock %}

@@ -223,9 +223,9 @@ def reviews_page():
             "name": request.form['name'],
             "review": request.form['review']
         }
-        reviews.append(review)
+        
         return redirect(url_for('reviews_page'))
-    return render_template('reviews.html', reviews=reviews)
+    return render_template('reviews.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

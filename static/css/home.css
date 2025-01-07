@@ -284,7 +284,7 @@ h2 {
     #stats-316 .cs-desc {
         font-size: var(--bodyFontSize);
         line-height: 1.5em;
-        color: #858585;
+        color: black;
         display: block;
     }
 }

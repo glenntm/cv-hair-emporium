@@ -1,0 +1,139 @@
+/*-- -------------------------- -->
+<---           Reviews          -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #reviews-1641 {
+      padding: var(--sectionPadding);
+      position: relative;
+      z-index: 1;
+    }
+    #reviews-1641 .cs-container {
+      width: 100%;
+      max-width: 80rem;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* 48px - 64px */
+      gap: clamp(2.5rem, 6vw, 4rem);
+    }
+    #reviews-1641 .cs-content {
+      /* set text align to left if content needs to be left aligned */
+      text-align: left;
+      width: 100%;
+      max-width: 43.375rem;
+      display: flex;
+      flex-direction: column;
+      /* centers content horizontally, set to flex-start to left align */
+      align-items: flex-start;
+      justify-content: center;
+    }
+    #reviews-1641 .cs-title {
+      /* 26 characters wide including spaces */
+      max-width: 26ch;
+      /* 28px - 64px */
+      margin: 0 0 clamp(1.75rem, 5vw, 4rem);
+    }
+    #reviews-1641 .cs-card-group {
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-direction: column;
+      /* 28px - 48px */
+      gap: clamp(1.75rem, 4vw, 3rem);
+    }
+    #reviews-1641 .cs-item {
+      width: 1005;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      /* 16px - 24px */
+      gap: clamp(1rem, 2.5vw, 1.5rem);
+    }
+    #reviews-1641 .cs-profile {
+      /* 60px - 116px */
+      width: clamp(3.75rem, 8vw, 7.25rem);
+      height: clamp(3.75rem, 8vw, 7.25rem);
+      border-radius: 50%;
+      overflow: hidden;
+      display: block;
+      /* prevents flexbox from squishing it */
+      flex: none;
+      position: relative;
+      z-index: 1;
+    }
+    #reviews-1641 .cs-profile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #reviews-1641 .cs-flex-group {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-direction: column;
+      /* 16px - 24px */
+      gap: clamp(1rem, 2.5vw, 1.5rem);
+    }
+    #reviews-1641 .cs-review {
+      /* 16px - 20px */
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--headerColor);
+      line-height: 1.5em;
+      display: block;
+    }
+    #reviews-1641 .cs-name {
+      font-size: var(--bodyFontSize);
+      color: var(--headerColor);
+      font-weight: 700;
+      line-height: 1.2em;
+      display: block;
+    }
+    #reviews-1641 .cs-picture {
+      width: 100%;
+      /* 400px - 752px, set to auto on tablet */
+      height: clamp(25rem, 120vw, 47rem);
+      display: block;
+      position: relative;
+      order: 2;
+    }
+    #reviews-1641 .cs-picture img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+  }
+  /* Tablet - 768px */
+  @media only screen and (min-width: 48rem) {
+    #reviews-1641 .cs-container {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: stretch;
+    }
+    #reviews-1641 .cs-content {
+      width: 57%;
+      /* prevents flexbox from squishing it */
+      flex: none;
+    }
+    #reviews-1641 .cs-picture {
+      min-height: 43.75rem;
+      height: auto;
+      /* sends it to the right in the 2nd position */
+      order: 2;
+    }
+  }
+                                  
