@@ -1,0 +1,236 @@
+/*-- -------------------------- -->
+<---          Contact           -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #contact-2195 {
+      padding: var(--sectionPadding);
+      background-color: #FBF5F1;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+    #contact-2195 .cs-container {
+      width: 100%;
+      /* changes to 1280px at tablet */
+      max-width: 48rem;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      /* 48px - 64px */
+      gap: clamp(3rem, 6vw, 4rem);
+    }
+    #contact-2195 .cs-content {
+      text-align: center;
+      width: 100%;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #contact-2195 .cs-title {
+      max-width: 27ch;
+    }
+    #contact-2195 .cs-form {
+      width: 100%;
+      max-width: 42.5rem;
+      /* prevents flexbox from affecting height and width */
+      box-sizing: border-box;
+      padding: 0;
+      display: grid;
+      justify-content: center;
+      align-items: center;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 0.75rem;
+    }
+    #contact-2195 .cs-label {
+      /* 14px - 16px */
+      font-size: clamp(0.875rem, 1.5vw, 1rem);
+      width: 100%;
+      color: var(--headerColor);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      grid-column: span 12;
+      gap: 0.25rem;
+    }
+    #contact-2195 .cs-label:last-of-type {
+      margin-bottom: 1.25rem;
+    }
+    #contact-2195 .cs-input {
+      font-size: 1rem;
+      width: 100%;
+      /* 46px - 56px */
+      height: clamp(2.875rem, 6vw, 3.5rem);
+      /* prevents padding from adding to height and width */
+      box-sizing: border-box;
+      padding: 0;
+      padding-left: 1.5rem;
+      background-color: #ffffff;
+      color: #767676;
+      border: none;
+    }
+    #contact-2195 .cs-input::placeholder {
+      color: #767676;
+    }
+    #contact-2195 .cs-select {
+      /* as the select arrow/date calendar icon are not affected by padding, we can use a transparent border on the select element to pad the arrow as much as we need */
+      border-right: 1.5rem solid rgba(0, 0, 0, 0);
+    }
+    #contact-2195 .cs-textarea {
+      font-family: inherit;
+      min-height: 7.5rem;
+      padding-top: 1rem;
+    }
+    #contact-2195 .cs-button-solid {
+      font-size: 1rem;
+      font-weight: 700;
+      /* 46px - 56px */
+      line-height: clamp(2.875em, 5.5vw, 3.5em);
+      text-align: center;
+      text-decoration: none;
+      width: 100%;
+      margin: 0;
+      /* prevents padding from adding to the width */
+      box-sizing: border-box;
+      /* 32px - 48px */
+      padding: 0 clamp(2rem, 4vw, 3rem);
+      background-color: var(--primary);
+      overflow: hidden;
+      color: #fff;
+      border: none;
+      display: inline-block;
+      position: relative;
+      z-index: 1;
+      transition: color 0.3s;
+    }
+    #contact-2195 .cs-button-solid:before {
+      content: '';
+      width: 0%;
+      height: 100%;
+      background: #000;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      transition: width 0.3s;
+    }
+    #contact-2195 .cs-button-solid:hover {
+      color: #fff;
+    }
+    #contact-2195 .cs-button-solid:hover:before {
+      width: 100%;
+    }
+    #contact-2195 .cs-submit {
+      grid-column: span 12;
+    }
+    #contact-2195 .cs-submit:hover {
+      cursor: pointer;
+    }
+    #contact-2195 .cs-floater {
+      height: auto;
+      display: none;
+      position: absolute;
+      z-index: -1;
+    }
+    #contact-2195 .cs-flower2 {
+      transform: rotateY(180deg);
+    }
+    #contact-2195 .cs-background {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -10;
+    }
+    #contact-2195 .cs-background img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
+  /* Tablet - 768px */
+  @media only screen and (min-width: 48rem) {
+    #contact-2195 .cs-container {
+      max-width: 80rem;
+    }
+    #contact-2195 .cs-form {
+      /* 464px - 680px */
+      max-width: clamp(29rem, 58vw, 42.5rem);
+    }
+    #contact-2195 .cs-label {
+      grid-column: span 6;
+    }
+    #contact-2195 .cs-label:last-of-type {
+      grid-column: span 12;
+    }
+    #contact-2195 .cs-button-solid {
+      width: auto;
+      margin: auto;
+    }
+    #contact-2195 .cs-floater {
+      /* 173px - 432px */
+      width: clamp(10.8125rem, 25vw, 27rem);
+      display: block;
+      /* 54px - 08px */
+      bottom: clamp(3.375rem, 6vw, 6.75rem);
+      left: -2rem;
+    }
+    #contact-2195 .cs-flower2 {
+      right: -2rem;
+      bottom: 3.375rem;
+      left: auto;
+    }
+  }
+
+  .star-rating {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1em;
+}
+
+.rating-text {
+    margin-bottom: 0.5em;
+    font-weight: bold;
+}
+
+.stars {
+    display: flex;
+    flex-direction: row-reverse; /* Align stars right-to-left for a natural fill effect */
+    justify-content: flex-start;
+    gap: 0.5em;
+}
+
+.stars input {
+    display: none; /* Hide the radio buttons */
+}
+
+.stars label {
+    font-size: 2rem;
+    color: #ccc; /* Default star color */
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.stars label:hover,
+.stars label:hover ~ label,
+.stars input:checked ~ label {
+    color: #ffcc00; /* Highlight color for stars */
+}
+
+  /* Small Desktop - 1024px */
+  @media only screen and (min-width: 64rem) {
+    #contact-2195 .cs-label {
+      grid-column: span 12;
+    }
+  }
+                                  

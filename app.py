@@ -6,7 +6,7 @@ from secret import database_username, database_secret, databse_name, databse_pas
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, Form, validators
 from wtforms.validators import InputRequired,Length, ValidationError,DataRequired, Email, length, Regexp
-from models import User, db, connect_db
+from models import User, db, connect_db, Review
 from flask_bcrypt import Bcrypt
 import psycopg2
 from psycopg2 import sql
@@ -23,6 +23,8 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
 import secrets 
+from sqlalchemy.orm import joinedload
+
 
 
 
@@ -226,6 +228,42 @@ def reviews_page():
         
         return redirect(url_for('reviews_page'))
     return render_template('reviews.html')
+
+@app.route('/write-review', methods=['GET', 'POST'])
+@login_required
+def write_reviews():
+    '''
+    try:
+        # Get form data
+        rating = request.form.get('rating')  # Get the rating from the form
+        comment = request.form.get('Message')
+
+        # Validate rating (ensure it's between 1 and 5)
+        if not rating or int(rating) not in range(1, 6):
+            flash("Invalid rating. Please select a rating between 1 and 5.", "error")
+            return redirect(request.referrer)
+
+        # Get the logged-in user's ID
+        user_id = current_user.id
+        
+
+        # Save to database
+        new_review = Review(
+            user_id=user_id,
+            rating=int(rating),
+            comment=comment
+        )
+        db.session.add(new_review)
+        db.session.commit()
+
+        flash("Thank you for your review!", "success")
+        return redirect(url_for('writeReview.html'))  # Redirect to a thank you page
+    except Exception as e:
+        db.session.rollback()
+        flash("An error occurred while submitting your review. Please try again.", "error")
+        return redirect(request.referrer)
+        '''
+    return render_template('writeReview.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

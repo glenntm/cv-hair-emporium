@@ -117,3 +117,11 @@ function onSuccess(googleUser) {
       passwordInput.style.borderColor = 'red';
     }
   });
+
+  //Star ratings
+  document.querySelectorAll('.stars input').forEach((input) => {
+    input.addEventListener('change', (event) => {
+        const selectedRating = event.target.value;
+        console.log(`Selected Rating: ${selectedRating}`);
+    });
+});

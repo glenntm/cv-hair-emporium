@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- ============================================ -->
+<!--                   Contact                    -->
+<!-- ============================================ -->
+
+<section id="contact-2195">
+    <div class="cs-container">
+        <div class="cs-content">
+            <span class="cs-topper">Leave A Review!</span>
+            <h2 class="cs-title">Let’s Capture The Celebration of True Love</h2>
+            <p class="cs-text">We have courses on-demand and live instructors for workshops and support. We also provide LIVE instructor-led training courses and onsite training.</p>
+        </div>
+        <!--Form-->
+        <form class="cs-form" id="cs-form-2195" name="Contact Form" method="post">
+            <label class="cs-label" aria-label="name">
+                <input class="cs-input" required type="text" id="name-2195" name="name" placeholder="Name">
+            </label>
+            <!-- Star Rating Section -->
+            <div class="cs-label star-rating" aria-label="rating">
+                <span class="rating-text">Rate our service:</span>
+                <div class="stars">
+                    <input type="radio" id="star5" name="rating" value="5" />
+                    <label for="star5" class="star">&#9733;</label>
+                    <input type="radio" id="star4" name="rating" value="4" />
+                    <label for="star4" class="star">&#9733;</label>
+                    <input type="radio" id="star3" name="rating" value="3" />
+                    <label for="star3" class="star">&#9733;</label>
+                    <input type="radio" id="star2" name="rating" value="2" />
+                    <label for="star2" class="star">&#9733;</label>
+                    <input type="radio" id="star1" name="rating" value="1" />
+                    <label for="star1" class="star">&#9733;</label>
+                </div>
+            </div>
+            <label class="cs-label" aria-label="message">
+                <textarea class="cs-input cs-textarea" required name="Message" id="message-2195" placeholder="Message"></textarea>
+            </label>
+            <button class="cs-button-solid cs-submit" type="submit">Schedule Consultation</button>
+        </form>
+    </div>
+    <img class="cs-floater" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/MISC/flower12.png" alt="flower" loading="lazy" aria-hidden="true" width="432" height="680">
+    <img class="cs-floater cs-flower2" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/MISC/flower12.png" alt="flower" loading="lazy" aria-hidden="true" width="432" height="680">
+    <!--Background-->
+    <picture class="cs-background">
+        <!--Mobile Image-->
+        <source media="(max-width: 600px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Graphics/abstract-gold.png">
+        <!--Tablet and above Image-->
+        <source media="(min-width: 601px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Graphics/abstract-gold.png">
+        <img src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Graphics/abstract-gold.png" alt="background" width="1920" height="949" loading="lazy" decoding="async" aria-hidden="true">
+    </picture>
+</section>
+                                
+
+{% endblock %}
