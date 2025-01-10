@@ -232,38 +232,37 @@ def reviews_page():
 @app.route('/write-review', methods=['GET', 'POST'])
 @login_required
 def write_reviews():
-    '''
-    try:
-        # Get form data
-        rating = request.form.get('rating')  # Get the rating from the form
-        comment = request.form.get('Message')
 
-        # Validate rating (ensure it's between 1 and 5)
-        if not rating or int(rating) not in range(1, 6):
-            flash("Invalid rating. Please select a rating between 1 and 5.", "error")
+    if request.method == 'POST':
+        # Debugging
+        print(f"Form Data: {request.form}")
+        try:
+            rating = request.form.get('rating')
+            comment = request.form.get('Message')
+
+            # Debugging
+            print(f"Rating: {rating}")
+            print(f"Message: {comment}")
+
+            if not rating or int(rating) not in range(1, 6):
+                flash("Invalid rating. Please select a rating between 1 and 5.", "error")
+                return redirect(request.referrer)
+
+            user_id = current_user.id
+
+            new_review = Review(user_id=user_id, rating=int(rating), comment=comment)
+            db.session.add(new_review)
+            db.session.commit()
+
+            flash("Thank you for your review!", "success")
+            return redirect(url_for('write_reviews'))
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error: {e}")
+            flash("An error occurred while submitting your review. Please try again.", "error")
             return redirect(request.referrer)
-
-        # Get the logged-in user's ID
-        user_id = current_user.id
         
-
-        # Save to database
-        new_review = Review(
-            user_id=user_id,
-            rating=int(rating),
-            comment=comment
-        )
-        db.session.add(new_review)
-        db.session.commit()
-
-        flash("Thank you for your review!", "success")
-        return redirect(url_for('writeReview.html'))  # Redirect to a thank you page
-    except Exception as e:
-        db.session.rollback()
-        flash("An error occurred while submitting your review. Please try again.", "error")
-        return redirect(request.referrer)
-        '''
-    return render_template('writeReview.html')
+    return render_template('writeReview.html', )
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
