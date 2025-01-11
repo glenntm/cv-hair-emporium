@@ -233,4 +233,23 @@
       grid-column: span 12;
     }
   }
-                                  
+
+/* Welcome Message H4 Styling */
+.welcome-message h4 {
+    font-size: 1.5rem; /* Adjust size */
+    font-weight: bold;
+    color: #333; /* Neutral dark color */
+    text-align: center;
+    margin-bottom: 20px; /* Space below */
+    width: 8rem;
+}
+
+/* Styling for the Rating Text (span) */
+.star-rating .rating-text {
+    font-size: 1.2rem; /* Slightly larger font size */
+    font-weight: 500; /* Medium weight for emphasis */
+    color: #333; /* Neutral dark color */
+    margin-bottom: 10px;
+    display: block; /* Ensures proper spacing below */
+    text-align: center; /* Center aligns the text */
+}

@@ -72,7 +72,7 @@ header {
     width: 100%;
     max-width: 40.625rem;
     margin: 0;
-    color: var(--bodyTextColor);
+    color: black;
 }
                             
 /* Navigation Menu Desktop */

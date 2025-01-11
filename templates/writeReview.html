@@ -9,14 +9,13 @@
     <div class="cs-container">
         <div class="cs-content">
             <span class="cs-topper">Leave A Review!</span>
-            <h2 class="cs-title">Let’s Capture The Celebration of True Love</h2>
-            <p class="cs-text">We have courses on-demand and live instructors for workshops and support. We also provide LIVE instructor-led training courses and onsite training.</p>
+            <h2 class="cs-title">Tell us how we did</h2>
         </div>
         <!--Form-->
         <form class="cs-form" id="cs-form-2195" name="Contact Form" method="post" action="/write-review">
             <div class="welcome-message">
-                <p>Welcome, {{ user.first_name }} {{ user.last_name[0] if user.last_name else '' }}!</p>
-            </div>            
+                <h4>{{ user.first_name }} {{ user.last_name[0] if user.last_name else '' }}</h4>
+            </div> 
             <div class="cs-label star-rating" aria-label="rating">
                 <span class="rating-text">Rate our service:</span>
                 <div class="stars">

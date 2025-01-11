@@ -227,7 +227,7 @@ h2 {
 @media only screen and (min-width: 0rem) {
     #stats-316 {
         padding: var(--sectionPadding);
-        background-color: rgb(174, 210, 255); /* #1a1a1a; */
+        background-color: rgb(150, 148, 255); /* #1a1a1a; */
     }
     #stats-316 .cs-card-group {
         width: 100%;
@@ -382,7 +382,7 @@ h2 {
         text-align: center;
         line-height: 1.5em;
         margin: auto;
-        color: var(--bodyTextColor);
+        color: black;
     }
     #reviews-62 .cs-button-solid {
         font-size: 1rem;

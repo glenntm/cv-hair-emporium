@@ -216,13 +216,13 @@
     #events-1650 .cs-location {
       font-size: 1rem;
       line-height: 1.5em;
-      color: var(--bodyTextColor);
+      color: black;
     }
     #events-1650 .cs-time {
       font-size: 1rem;
       line-height: 1.5em;
       margin: 0;
-      color: var(--bodyTextColor);
+      color: black;
       display: flex;
       gap: 0.5rem;
     }

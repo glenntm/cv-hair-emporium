@@ -240,10 +240,6 @@ def write_reviews():
             rating = request.form.get('rating')
             comment = request.form.get('Message')
 
-            # Debugging
-            print(f"Rating: {rating}")
-            print(f"Message: {comment}")
-
             if not rating or int(rating) not in range(1, 6):
                 flash("Invalid rating. Please select a rating between 1 and 5.", "error")
                 return redirect(request.referrer)
@@ -255,14 +251,14 @@ def write_reviews():
             db.session.commit()
 
             flash("Thank you for your review!", "success")
-            return redirect(url_for('write_reviews'))
+            return redirect(url_for('reviews'))
         except Exception as e:
             db.session.rollback()
             print(f"Error: {e}")
             flash("An error occurred while submitting your review. Please try again.", "error")
             return redirect(request.referrer)
         
-    return render_template('writeReview.html', )
+    return render_template('writeReview.html', user=current_user )
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
