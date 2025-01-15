@@ -6,7 +6,7 @@
 @media only screen and (min-width: 0rem) {
     #contact-2195 {
       padding: var(--sectionPadding);
-      background-color: #FBF5F1;
+      background-color: #EBEAFF;
       overflow: hidden;
       position: relative;
       z-index: 1;
@@ -241,7 +241,8 @@
     color: #333; /* Neutral dark color */
     text-align: center;
     margin-bottom: 20px; /* Space below */
-    width: 8rem;
+    width: 25rem;
+    
 }
 
 /* Styling for the Rating Text (span) */

@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Login Page</h1>
 
 <section id="contact-1388">
   <div class="cs-container">
       <!--Form-->
       <form class="cs-form" id="cs-form-1388" name="Contact Form" method="POST" action="{{ url_for('login') }}">
         {{ form.hidden_tag() }}
-          <h3 class="cs-h3">Login</h3>
           <label class="cs-label cs-email">
             {{ form.email.label }}
             {% if form.email.errors %}
@@ -30,6 +28,7 @@
             </a>
           </div>
           <br>
+            <a class="forgot-password-link" href="{{ url_for('forgot_password') }}">Forgot Password?</a>
           <div class="registration-info">
             <p>Don't have an account?</p>
             <a class="registration-link" href="{{ url_for('register') }}">Register</a>

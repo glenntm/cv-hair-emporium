@@ -251,7 +251,7 @@ def write_reviews():
             db.session.commit()
 
             flash("Thank you for your review!", "success")
-            return redirect(url_for('reviews'))
+            return render_template('reviews.html')
         except Exception as e:
             db.session.rollback()
             print(f"Error: {e}")
@@ -262,6 +262,7 @@ def write_reviews():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    session.clear()  # Clear any existing session data
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -391,8 +392,7 @@ def user_dashboard():
         # Assuming 'current_user' contains the registered user's details
         email = current_user.email  # Use your ORM model or context to fetch
 
-    # Debugging print
-    print(f"Email used: {email}")
+
 
     cal_info = cal_json['data']
     matching_events = []

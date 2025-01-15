@@ -113,6 +113,7 @@
       background-color: #fff;
       border-radius: 1rem;
       display: flex;
+      flex-direction: column;
       justify-content: space-between;
       flex-wrap: wrap;
       align-items: center;
@@ -310,4 +311,8 @@
     margin: 1rem auto;  /* Centers the div horizontally and adds spacing */
     display: block;     /* Ensures the div behaves like a block element */
     width: 100%;        /* Optional: Adjust width if needed */
+}
+
+.forgot-password-link {
+   
 }

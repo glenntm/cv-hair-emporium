@@ -125,3 +125,6 @@ function onSuccess(googleUser) {
         console.log(`Selected Rating: ${selectedRating}`);
     });
 });
+
+
+
