@@ -54,6 +54,25 @@
                         <span class="cs-name">Katrin McWell, Forbes</span>
                     </div>
                 </li>
+                {% for review in reviews %}
+                <li class="cs-item">
+                    <picture class="cs-profile">
+                        <img src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1114445501.jpg" alt="profile" width="35" height="40" loading="lazy" decoding="async" aria-hidden="true">
+                    </picture>
+                    <div class="cs-flex-group">
+                        <span class="cs-review">{{ review.comment }}</span>
+                        <ul class="star-rating">
+                            {% for _ in range(review.rating) %}
+                                <li class="star">&#9733;</li>
+                            {% endfor %}
+                            {% for _ in range(5 - review.rating) %}
+                                <li class="star empty">&#9734;</li>
+                            {% endfor %}
+                        </ul>
+                        <span class="cs-name">{{ review.user.first_name }} {{ review.user.last_name[0] }}.</span>
+                    </div>
+                </li>
+                {% endfor %}
             </ul>
         </div>
     </div>

@@ -225,9 +225,12 @@ def reviews_page():
             "name": request.form['name'],
             "review": request.form['review']
         }
-        
-        return redirect(url_for('reviews_page'))
-    return render_template('reviews.html')
+    
+    # Query all reviews, including the associated user
+    reviews = Review.query.join(User).all()
+          
+        #return redirect(url_for('reviews_page'))
+    return render_template('reviews.html', reviews=reviews)
 
 @app.route('/write-review', methods=['GET', 'POST'])
 @login_required

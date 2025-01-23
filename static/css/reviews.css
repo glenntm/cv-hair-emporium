@@ -136,4 +136,25 @@
       order: 2;
     }
   }
-                                  
+
+/* Style for the star-rating list */
+.star-rating {
+  list-style: none;  /* Remove default list styling (bullets) */
+  padding: 0;        /* Remove padding */
+  margin: 0;         /* Remove margin */
+  display: flex;     /* Display the stars in a horizontal row */
+  gap: 4px;          /* Optional: Add space between stars */
+}
+
+/* Style for each star */
+.star {
+  font-size: 20px;   /* Adjust the size of the stars */
+  color: gold;       /* Color for filled stars */
+}
+
+/* Style for empty stars */
+.star.empty {
+  color: #ccc;       /* Color for empty stars (light gray) */
+}
+
+                            
