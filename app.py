@@ -228,8 +228,11 @@ def reviews_page():
     
     # Query all reviews, including the associated user
     reviews = Review.query.join(User).all()
+
+    # Process the datetime
+    for review in reviews:
+        review.date_formatted = review.updated_at.strftime("%B %d, %Y")  # Example: "January 23, 2025"
           
-        #return redirect(url_for('reviews_page'))
     return render_template('reviews.html', reviews=reviews)
 
 @app.route('/write-review', methods=['GET', 'POST'])

@@ -69,7 +69,7 @@
                                 <li class="star empty">&#9734;</li>
                             {% endfor %}
                         </ul>
-                        <span class="cs-name">{{ review.user.first_name }} {{ review.user.last_name[0] }}.</span>
+                        <span class="cs-name">{{ review.user.first_name }} {{ review.user.last_name[0] }}, {{review.date_formatted}} </span>
                     </div>
                 </li>
                 {% endfor %}

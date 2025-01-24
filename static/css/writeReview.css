@@ -194,7 +194,7 @@
 
   .star-rating {
     display: flex;
-    flex-direction: column;
+    /*flex-direction: column;*/
     margin-bottom: 1em;
 }
 
