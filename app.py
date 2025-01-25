@@ -232,8 +232,16 @@ def reviews_page():
     # Process the datetime
     for review in reviews:
         review.date_formatted = review.updated_at.strftime("%B %d, %Y")  # Example: "January 23, 2025"
-          
-    return render_template('reviews.html', reviews=reviews)
+    
+    # Get the page number from the query parameters (default is 1)
+    page = request.args.get('page', 1, type=int)
+    per_page = 2  # Number of items per page
+
+    # Use paginate() to get the items and pagination metadata
+    pagination = Review.query.order_by(Review.created_at.desc()).paginate(page=page, per_page=per_page)
+    reviews = pagination.items  # Items for the current page
+
+    return render_template('reviews.html', reviews=reviews, pagination=pagination)
 
 @app.route('/write-review', methods=['GET', 'POST'])
 @login_required

@@ -18,49 +18,12 @@
             <span class="cs-topper">Reviews</span>
             <h2 class="cs-title">What Our Clients Say</h2>
             <ul class="cs-card-group">
-                <li class="cs-item">
-                    <picture class="cs-profile">
-                        <img src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/MISC/ecomm-headshot1.jpeg" alt="profile" width="35" height="40" loading="lazy" decoding="async" aria-hidden="true">
-                    </picture>
-                    <div class="cs-flex-group">
-                        <span class="cs-review">The fashion shop has a diverse range of sizes and styles, which is great for all body types and tastes.</span>
-                        <span class="cs-name">Katrin McWell, Forbes</span>
-                    </div>
-                </li>
-                <li class="cs-item">
-                    <picture class="cs-profile">
-                        <img src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/MISC/ecomm-headshot2.jpeg" alt="profile" width="35" height="40" loading="lazy" decoding="async" aria-hidden="true">
-                    </picture>
-                    <div class="cs-flex-group">
-                        <span class="cs-review">I am a regular at this fashion shop - their stylish clothes and accessories always keep me ahead of the trend.</span>
-                        <span class="cs-name">Madelyn George, ELLE</span>
-                    </div>
-                </li>
-                <li class="cs-item">
-                    <picture class="cs-profile">
-                        <img src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/MISC/ecomm-headshot3.jpeg" alt="profile" width="35" height="40" loading="lazy" decoding="async" aria-hidden="true">
-                    </picture>
-                    <div class="cs-flex-group">
-                        <span class="cs-review">The prices are reasonable for the high-quality products and the customer service is outstanding.</span>
-                        <span class="cs-name">Monica Johns, Cosmopolitan</span>
-                    </div>
-                </li>
-                <li class="cs-item">
-                    <picture class="cs-profile">
-                        <img src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/MISC/ecomm-headshot1.jpeg" alt="profile" width="35" height="40" loading="lazy" decoding="async" aria-hidden="true">
-                    </picture>
-                    <div class="cs-flex-group">
-                        <span class="cs-review">The fashion shop has a diverse range of sizes and styles, which is great for all body types and tastes.</span>
-                        <span class="cs-name">Katrin McWell, Forbes</span>
-                    </div>
-                </li>
                 {% for review in reviews %}
                 <li class="cs-item">
                     <picture class="cs-profile">
                         <img src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1114445501.jpg" alt="profile" width="35" height="40" loading="lazy" decoding="async" aria-hidden="true">
                     </picture>
                     <div class="cs-flex-group">
-                        <span class="cs-review">{{ review.comment }}</span>
                         <ul class="star-rating">
                             {% for _ in range(review.rating) %}
                                 <li class="star">&#9733;</li>
@@ -69,11 +32,27 @@
                                 <li class="star empty">&#9734;</li>
                             {% endfor %}
                         </ul>
-                        <span class="cs-name">{{ review.user.first_name }} {{ review.user.last_name[0] }}, {{review.date_formatted}} </span>
+                        <span class="cs-review">{{ review.comment }}</span>
+                        <span class="cs-name">{{ review.user.first_name }} {{ review.user.last_name[0] }} </span>
+                        <span>{{review.date_formatted}}</span>
                     </div>
                 </li>
                 {% endfor %}
             </ul>
+            <!-- Pagination Controls -->
+            <div class="pagination">
+                <div class="pagination-container">
+                {% if pagination.has_prev %}
+                <a class="review-button-solid" href="{{ url_for('reviews_page', page=pagination.prev_num) }}">Previous</a>
+                {% endif %}
+                    <span>Page {{ pagination.page }} of {{ pagination.pages }}</span>
+
+                    {% if pagination.has_next %}
+                    <a class="review-button-solid" href="{{ url_for('reviews_page', page=pagination.next_num) }}">Next</a>
+                    {% endif %}
+
+                </div>
+            </div>
         </div>
     </div>
 </section>

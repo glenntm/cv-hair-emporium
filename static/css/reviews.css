@@ -157,4 +157,56 @@
   color: #ccc;       /* Color for empty stars (light gray) */
 }
 
+.pagination {
+  margin-top: 3rem;
+}
+
+.pagination-container {
+  display: flex; /* Lay out children in a row */
+  align-items: center; /* Align items vertically at the center */
+  gap: 1rem; /* Space between the span and the button */
+}
+
+.review-button-solid {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 3.5rem;
+    text-decoration: none;
+    padding: 0 3rem;
+    background-color: var(--primary);
+    overflow: hidden;
+    color: #fff;
+    border-radius: 0.5rem;
+    display: flex;
+    position: relative;
+    z-index: 1;
+    transition: color 0.3s;
+    border-radius: 5rem;
+    width: 2rem;
+    justify-content: center;
+  }
+
+  
+.review-button-solid:before {
+    content: "";
+    width: 0%;
+    height: 100%;
+    background: #1a1a1a;
+    opacity: 1;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    transition: width 0.3s;
+  }
+.review-button-solid:hover {
+    color: white  ;
+  }
+
+  .review-button-solid:hover:before {
+    width: 100%;
+  }
+
+              
                             
