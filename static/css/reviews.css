@@ -29,6 +29,7 @@
       /* centers content horizontally, set to flex-start to left align */
       align-items: flex-start;
       justify-content: center;
+  
     }
     #reviews-1641 .cs-title {
       /* 26 characters wide including spaces */
@@ -207,6 +208,27 @@
   .review-button-solid:hover:before {
     width: 100%;
   }
+
+  /* Toggle Button */
+  .toggle-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.toggle-button {
+    padding: 10px 20px;
+    text-decoration: none;
+    background-color: black;
+    color: white;
+    border-radius: 5rem;
+    font-weight: bold;
+}
+
+.toggle-button.active {
+    background-color: rgb(148, 0, 255);
+    color: white;
+}
 
               
                             

@@ -220,28 +220,38 @@ def gallery():
 
 @app.route('/reviews', methods=['GET', 'POST'])
 def reviews_page():
+    # Handle new review submission (if applicable)
     if request.method == 'POST':
-        review = {
-            "name": request.form['name'],
-            "review": request.form['review']
-        }
-    
-    # Query all reviews, including the associated user
-    reviews = Review.query.join(User).all()
+        review = Review(
+            name=request.form['name'],
+            review=request.form['review'],
+            user_id=current_user.id,  # Assuming user association
+        )
+        db.session.add(review)
+        db.session.commit()
+
+    # Get filter from query parameters
+    filter_type = request.args.get('filter', 'all')
+
+    # Base query
+    if filter_type == 'mine':
+        reviews_query = Review.query.filter_by(user_id=current_user.id)
+    else:
+        reviews_query = Review.query  # All reviews
+
+    # Pagination setup
+    page = request.args.get('page', 1, type=int)
+    per_page = 2  # Number of items per page
+    pagination = reviews_query.order_by(Review.created_at.desc()).paginate(page=page, per_page=per_page)
+
+    # Reviews for the current page
+    reviews = pagination.items
 
     # Process the datetime
     for review in reviews:
         review.date_formatted = review.updated_at.strftime("%B %d, %Y")  # Example: "January 23, 2025"
-    
-    # Get the page number from the query parameters (default is 1)
-    page = request.args.get('page', 1, type=int)
-    per_page = 2  # Number of items per page
 
-    # Use paginate() to get the items and pagination metadata
-    pagination = Review.query.order_by(Review.created_at.desc()).paginate(page=page, per_page=per_page)
-    reviews = pagination.items  # Items for the current page
-
-    return render_template('reviews.html', reviews=reviews, pagination=pagination)
+    return render_template('reviews.html', reviews=reviews, pagination=pagination, filter_type=filter_type)
 
 @app.route('/write-review', methods=['GET', 'POST'])
 @login_required

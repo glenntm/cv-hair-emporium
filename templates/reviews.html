@@ -17,6 +17,18 @@
         <div class="cs-content">
             <span class="cs-topper">Reviews</span>
             <h2 class="cs-title">What Our Clients Say</h2>
+            <div class="toggle-buttons">
+                <a 
+                    href="{{ url_for('reviews_page', filter='all') }}" 
+                    class="toggle-button {% if filter_type == 'all' %}active{% endif %}">
+                    All Reviews
+                </a>
+                <a 
+                    href="{{ url_for('reviews_page', filter='mine') }}" 
+                    class="toggle-button {% if filter_type == 'mine' %}active{% endif %}">
+                    My Reviews
+                </a>
+            </div>
             <ul class="cs-card-group">
                 {% for review in reviews %}
                 <li class="cs-item">
