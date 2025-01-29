@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section id="contact-2195">
+    <div class="cs-container">
+        <div class="cs-content">
+            <span class="cs-topper">Edit Your Review</span>
+            <h2 class="cs-title">Update your feedback</h2>
+        </div>
+        <!-- Edit Review Form -->
+        <form class="cs-form" id="cs-form-2195" name="Edit Review Form" method="post" action="{{ url_for('edit_review', review_id=review.id) }}">
+            <span class="rating-text">Welcome, {{ current_user.first_name }} {{ current_user.last_name[0] if current_user.last_name else '' }}</span>
+            
+            <!-- Star Rating (Preselect the user's previous rating) -->
+            <div class="cs-label star-rating" aria-label="rating">
+                <span class="rating-text">Update your rating:</span>
+                <div class="stars">
+                    {% for i in range(5, 0, -1) %}
+                        <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" {% if review.rating == i %}checked{% endif %} />
+                        <label for="star{{ i }}" class="star">&#9733;</label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Update Comment Field -->
+            <label class="cs-label" aria-label="message">
+                <textarea class="cs-input cs-textarea" required name="comment" id="message-2195" placeholder="Update your review">{{ review.comment }}</textarea>
+            </label>
+            
+            <!-- Submit Button -->
+            <button class="cs-button-solid cs-submit" type="submit">Update Review</button>
+        </form>
+    </div>
+</section>
+                    
+
+{% endblock %}

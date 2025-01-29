@@ -48,6 +48,10 @@
                         <span class="cs-name">{{ review.user.first_name }} {{ review.user.last_name[0] }} </span>
                         <span>{{review.date_formatted}}</span>
                     </div>
+                    <!-- Show Edit button only in 'My Reviews' toggle -->
+                    {% if filter_type == 'mine' %}
+                    <a href="{{ url_for('edit_review', review_id=review.id) }}" class="edit-button">Edit Review</a>
+                    {% endif %}
                 </li>
                 {% endfor %}
             </ul>

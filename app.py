@@ -284,6 +284,29 @@ def write_reviews():
         
     return render_template('writeReview.html', user=current_user )
 
+@app.route('/edit_review/<int:review_id>', methods=['GET', 'POST'])
+@login_required  # Ensure the user is logged in
+def edit_review(review_id):
+    # Fetch the review
+    review = Review.query.get_or_404(review_id)
+
+    # Ensure the current user owns the review
+    if review.user_id != current_user.id:
+        flash('You are not authorized to edit this review.', 'danger')
+        return redirect(url_for('reviews_page'))
+
+    if request.method == 'POST':
+        # Update the review content
+        review.comment = request.form['comment']
+        review.updated_at = datetime.utcnow()  # Update the timestamp
+        review.rating = request.form['rating']
+        db.session.commit()
+        flash('Your review has been updated!', 'success')
+        return redirect(url_for('reviews_page'))
+
+    return render_template('editReview.html', review=review)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     session.clear()  # Clear any existing session data

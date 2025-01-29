@@ -1,6 +1,7 @@
 # Ignore Python compiled files
 __pycache__/
 *.pyc
+__pycache__/app.cpython-310.pyc
 
 # Ignore virtual environment directories
 venv/
@@ -20,3 +21,6 @@ secrets
 # Ignore OS-specific files
 .DS_Store
 Thumbs.db
+
+
+secret.py
