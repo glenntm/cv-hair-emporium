@@ -158,13 +158,21 @@ def forgot_password():
 
             # Send the reset email
             reset_url = url_for('reset_password', token=token, _external=True)
-            msg = Message('Password Reset Request',
+            msg = Message('[CV Hair Emporium]: Password Reset Request',
             sender ='danotoriousg@gmail.com', 
                           recipients=[email],
-                          body=f'Click the link to reset your password: {reset_url}')
+                          body=f'''
+                        We received a request to reset your password for your account. Click the link below to set a new password:
+                        {reset_url}
+                        
+                        If you didn’t request a password reset, you can ignore this email—your password will remain unchanged.
+                        
+                        Best,
+                        CV Hair Emporium Team
+                            ''')
             mail.send(msg)
             flash('Password reset email sent. Check your inbox.', 'info')
-            return render_template('gallery.html')
+            return render_template('home.html')
         else:
             flash('Email not found.', 'warning')
             return render_template('forgotPw.html', form=form)
@@ -210,9 +218,10 @@ def reset_password(token):
 
 @app.route('/')
 def home():
-    appointments = cal_json['data']
+    recent_reviews = Review.query.order_by(Review.updated_at.desc()).limit(3).all()
 
-    return render_template('home.html', cal_url = response.text, appointments=appointments)
+
+    return render_template('home.html', cal_url = response.text, recent_reviews=recent_reviews)
 
 @app.route('/gallery')
 def gallery():
@@ -220,6 +229,8 @@ def gallery():
 
 @app.route('/reviews', methods=['GET', 'POST'])
 def reviews_page():
+    print(f"Current User ID: {current_user.id}")
+
     # Handle new review submission (if applicable)
     if request.method == 'POST':
         review = Review(
@@ -268,14 +279,12 @@ def write_reviews():
                 flash("Invalid rating. Please select a rating between 1 and 5.", "error")
                 return redirect(request.referrer)
 
-            user_id = current_user.id
-
-            new_review = Review(user_id=user_id, rating=int(rating), comment=comment)
+            new_review = Review(user_id=current_user.id, rating=int(rating), comment=comment)
             db.session.add(new_review)
             db.session.commit()
 
             flash("Thank you for your review!", "success")
-            return render_template('reviews.html')
+            return redirect(url_for('reviews_page'))
         except Exception as e:
             db.session.rollback()
             print(f"Error: {e}")

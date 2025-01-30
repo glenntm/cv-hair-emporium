@@ -131,35 +131,30 @@
             <div class="cs-content">
                 <span class="cs-topper">Our Reviews</span>
                 <h2 class="cs-title">Words From Our Customers</h2>
-              <!-- <p class="cs-text">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit dolor volutpat porttitor sagittis nunc nisl. Sagittis sit pellentesque gravida viverra. Leo ut sed euismod tortor risus et. Ornare non neque, leo, ornare. Lorem ipsum dolor sit amet.
-                </p> -->
             </div>
             <ul class="cs-card-group">
+                {% for review in recent_reviews %}
                 <li class="cs-item">
-                    <img class="cs-img" aria-hidden="true" loading="lazy" decoding="async" src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1114445501.jpg" alt="profile" width="68" height="68">
-                    <span class="cs-name">John Doe</span>
-                    <span class="cs-desc">Texas</span>
+                    <img class="cs-img" aria-hidden="true" loading="lazy" decoding="async" 
+                        src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1114445501.jpg" 
+                        alt="profile" width="68" height="68">
+                    <span class="cs-name">{{ review.user.first_name }} {{ review.user.last_name[0] }}</span>
+                    <span class="cs-desc">
+                    <!-- Star Rating -->
+                    <ul class="star-rating">
+                        {% for _ in range(review.rating) %}
+                            <li class="star">&#9733;</li> <!-- Filled star -->
+                        {% endfor %}
+                        {% for _ in range(5 - review.rating) %}
+                            <li class="star empty">&#9734;</li> <!-- Empty star -->
+                        {% endfor %}
+                    </ul>
+                    </span>
                     <p class="cs-item-text">
-                        Proin massa eros, quis fringilla sagittis. Euismod scelerisque varius sed nec consequat, turpis.
+                        {{ review.comment }}
                     </p>
                 </li>
-                <li class="cs-item">
-                    <img class="cs-img" aria-hidden="true" loading="lazy" decoding="async" src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1114445501.jpg" alt="profile" width="68" height="68">
-                    <span class="cs-name">Jane Smith</span>
-                    <span class="cs-desc">California</span>
-                    <p class="cs-item-text">
-                        Proin massa eros, quis fringilla sagittis. Euismod scelerisque varius sed nec consequat, turpis.
-                    </p>
-                </li>
-                <li class="cs-item">
-                    <img class="cs-img" aria-hidden="true" loading="lazy" decoding="async" src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1114445501.jpg" alt="profile" width="68" height="68">
-                    <span class="cs-name">Thomas Madden</span>
-                    <span class="cs-desc">Texas</span>
-                    <p class="cs-item-text">
-                        Proin massa eros, quis fringilla sagittis. Euismod scelerisque varius sed nec consequat, turpis.
-                    </p>
-                </li>
+                {% endfor %}
             </ul>
             <a aria-label="read more reviews" href="http://127.0.0.1:5000/reviews" class="cs-button-solid">Read More</a>
         </div>
