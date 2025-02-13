@@ -1,3 +1,49 @@
+const test = document.getElementById("test");
+test.addEventListener('click', () => {
+  alert('Hello, World!');
+});
+//Carousel Code
+document.addEventListener('DOMContentLoaded', () => {
+  const carouselContainer = document.querySelector('.carousel');
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const carouselSlide = document.querySelector(".carousel-slide");
+  const carouselItems = document.querySelectorAll(".carousel-item");
+
+  console.log('prevBtn:', prevBtn);
+  console.log('nextBtn:', nextBtn);
+  console.log('carouselSlide:', carouselSlide);
+  console.log('carouselItems:', carouselItems);
+
+  let counter = 0;
+
+  function showSlide(index) {
+      if (index < 0) {
+          counter = carouselItems.length - 1;
+      } else if (index >= carouselItems.length) {
+          counter = 0;
+      } else {
+          counter = index;
+      }
+      carouselSlide.style.transform = `translateX(${-counter * 100}%)`;
+      console.log(`Showing slide ${counter}`);
+  }
+  
+  prevBtn.addEventListener('click', (event) => {
+ 
+    console.log('Prev button clicked');
+    showSlide(counter - 1);
+});
+
+nextBtn.addEventListener('click', (event) => {
+    console.log('Next button clicked');
+    showSlide(counter + 1);
+});
+
+});
+
+
+// Nav Bar 
 function toggleMenu(){
     const menu = document.querySelector(".menu-links");
     const icon = document.querySelector(".hamburger-icon");
@@ -67,6 +113,8 @@ function openSection(evt, sectionName) {
     evt.currentTarget.classList.add('active');
 }
 
+
+
 //function for google SSO
 function onSuccess(googleUser) {
     console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
@@ -126,5 +174,19 @@ function onSuccess(googleUser) {
     });
 });
 
+// Sub Accordian Services
+function toggleSubSection(event) {
+  const li = event.currentTarget;
+  const subSection = li.querySelector('.sub-section');
+  const arrow = li.querySelector('.arrow');
 
-
+  if (li.classList.contains('active')) {
+      li.classList.remove('active');
+      subSection.style.maxHeight = '0';
+      subSection.style.padding = '0 10px';
+  } else {
+      li.classList.add('active');
+      subSection.style.maxHeight = subSection.scrollHeight + 'px';
+      subSection.style.padding = '10px';
+  }
+}

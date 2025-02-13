@@ -1,7 +1,6 @@
 /*-- -------------------------- -->
 <---           Hero             -->
 <--- -------------------------- -*/
-
 /* Mobile - 360px */
 @media only screen and (min-width: 0rem) {
     #hero-1785 {
@@ -11,7 +10,8 @@
       overflow: hidden;
       position: relative;
       z-index: 1;
-    }
+      margin: 0;
+    } 
     #hero-1785 .cs-container {
       width: 100%;
       max-width: 80rem;
@@ -90,9 +90,6 @@
       z-index: 0;
       transform: translateX(-50%);
     }
-    #hero-1785 .cs-graphic-dark {
-      display: none;
-    }
     #hero-1785 .cs-background {
       width: 100%;
       height: 100%;
@@ -107,7 +104,7 @@
       content: "";
       width: 100%;
       height: 100%;
-      background: #000;
+      /* background: black; */
       /* prevents the cursor from interacting with it */
       pointer-events: none;
       opacity: 0.7;
@@ -194,8 +191,19 @@ h2 {
 
 .section-content ul li:last-child {
     border-bottom: none;
+    
 }
 
+.service-sub-section {
+    border-bottom: 1px solid #ddd;
+    font-size: 1rem;
+    padding: 8px 0;
+}
+
+.service-sub-section:last-child {
+    border-bottom: none;
+    
+}
 /* Styling for the prices */
 .price {
     float: right;
@@ -440,5 +448,100 @@ h2 {
 }
 
 
-                                
-                                  
+
+.carousel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.carousel-slide {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.carousel-item {
+    min-width: 100%;
+    box-sizing: border-box;
+}
+
+.cs-background img {
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    font-size: 2rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    z-index: 50;
+}
+
+.carousel-btn.prev {
+    left: 10px;
+}
+
+.carousel-btn.next {
+    right: 10px;
+}
+
+/*Accordian Section */
+
+.section-content {
+    display: none;
+}
+.section-content.active {
+    display: block;
+}
+.sub-services {
+    display: none;
+    padding-left: 20px;
+}
+.sub-services li {
+    list-style-type: circle;
+    font-size: 0.9rem;
+    color: #555;
+}
+li {
+    cursor: pointer;
+    padding: 5px 0;
+}
+
+/* Accordian */
+.sub-section {
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+    overflow: hidden;
+    max-height: 0;
+}
+
+.arrow {
+    margin-left: 10px;
+    cursor: pointer;
+    display: inline-block;
+    transition: transform 0.3s ease-out;
+}
+
+li.active .arrow {
+    transform: rotate(180deg);
+}
+
+li.active .sub-section {
+    display: block;
+    max-height: 200px; /* Adjust as needed */
+    padding: 10px;
+}                         
