@@ -31,7 +31,7 @@
                     <!--Update email later-->
                     <a href="mailto:someone@example.com" class="cs-top-link">
                         <img class="cs-link-icon" src="/static/images/icons8-email-50.png" alt="logo" width="20" height="20" aria-hidden="true" decoding="async">
-                        cvhairemprium@gmail.com
+                        cvhairemporium@gmail.com
                     </a>
                 </div>
                 <div class="cs-top-social">
@@ -76,6 +76,9 @@
                         </li>
                         <!-- Check if the user is authenticated -->
                         {% if current_user.is_authenticated %}
+                        <li class="cs-li">
+                            <a href="{{ url_for('user_dashboard') }}" class="cs-li-link">Appointment Dashboard</a>
+                        </li>
                         <li class="cs-li">
                             <a href="{{ url_for('logout') }}" class="cs-li-link">Logout</a>
                         </li>
