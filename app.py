@@ -207,6 +207,11 @@ def reset_password(token):
         try:
             db.session.commit()
             print("Password hash updated successfully.")
+
+            # Double-check if password is updated
+            updated_user = User.query.filter_by(email=user.email).first()
+            print(f"Updated password in DB: {updated_user.password}")  # Debugging
+
         except Exception as e:
             db.session.rollback()  # Rollback in case of an error
             print(f"Error updating password: {e}")
@@ -318,19 +323,29 @@ def edit_review(review_id):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    session.clear()  # Clear any existing session data
     form = LoginForm()
+    print("CSRF Token from form:", form.csrf_token.data, flush=True)
+
+
     if form.validate_on_submit():
+        print("Form validated successfully!", flush=True)
         user = User.query.filter_by(email=form.email.data).first()
-        #check if there is an email in database 
+
         if not user:
             flash('No account found with this email address. Please register first.', 'danger')
             return redirect(url_for('login'))
 
-        if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):
-                login_user(user)
-                return redirect(url_for('user_dashboard'))
+        db.session.refresh(user)  # Ensures we have the latest data from the DB
+        print(f"Stored password hash: {user.password}")  # Debugging
+
+        if bcrypt.check_password_hash(user.password, form.password.data):
+            print("Password matched!")
+            login_user(user)
+            return redirect(url_for('user_dashboard'))
+        else:
+            print("Password did not match!")
+            flash("Incorrect password.", "danger")
+
     return render_template('login.html', form=form)
 
 # Route for google authorization
