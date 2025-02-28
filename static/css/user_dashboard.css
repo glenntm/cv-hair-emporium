@@ -23,6 +23,7 @@
     justify-content: center;
     flex-wrap: wrap;
     gap: 0.5rem;
+    margin-bottom: 1rem;
   }
 
   .cs-button-solid:before {

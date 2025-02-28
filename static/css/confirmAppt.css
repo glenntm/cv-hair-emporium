@@ -2,6 +2,10 @@
 <---           Hero             -->
 <--- -------------------------- -*/
 
+#hero-1426 {
+  /*background-color: #AED2FF; */
+}
+
 /* Mobile - 360px */
 @media only screen and (min-width: 0rem) {
     #hero-1426 {
@@ -140,4 +144,6 @@
       background-color: var(--primary);
     }
   }
+
+
                                   

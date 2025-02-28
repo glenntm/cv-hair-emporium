@@ -12,18 +12,17 @@
                 Your payment has been successfully processed. Your appointment is now awaiting confirmation. We will notify you once it has been confirmed.
             </p>
             <div class="cs-button-group">
-                <a href="" class="cs-button-solid cs-button1">Back to Dashboard</a>
-                <a href="" class="cs-button-solid cs-button2">Donate Now</a>
+                <a href="{{ url_for('user_dashboard') }}" class="cs-button-solid cs-button1">Back to Dashboard</a>
             </div>
         </div>
     </div>
 
     <!-- Background Image -->
     <picture class="cs-background">
-        <source media="(max-width: 600px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Landscapes/field-m.jpg">
-        <source media="(min-width: 601px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Landscapes/field.jpg">
+        <source media="(max-width: 600px)" srcset="https://files.oaiusercontent.com/file-3GzUzj2LBpCXyYfKkm17ZC?se=2025-02-28T02%3A52%3A10Z&sp=r&sv=2024-08-04&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3D9e086049-0079-4116-963a-651bed16af2a.webp&sig=5mo/nJCRomQYTqTHGCn0O8xDUs8f/U%2BTRXQTSGDDzK8%3D">
+        <source media="(min-width: 601px)" srcset="https://files.oaiusercontent.com/file-3GzUzj2LBpCXyYfKkm17ZC?se=2025-02-28T02%3A52%3A10Z&sp=r&sv=2024-08-04&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3D9e086049-0079-4116-963a-651bed16af2a.webp&sig=5mo/nJCRomQYTqTHGCn0O8xDUs8f/U%2BTRXQTSGDDzK8%3D">
         <img loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Landscapes/field.jpg" alt="field" width="1920" height="1200" aria-hidden="true">
-    </picture>
+    </picture> 
 </section>
                                 
 {% endblock %}
