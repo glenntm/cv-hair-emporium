@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section>
+    <div class="cs-container-reset">
+      <div class="cs-content">
+          <span class="cs-topper-reset">Session Expired</span>
+          <h1 class="cs-title-reset">Your authentication token has expired. Please log in again to continue.</h1>
+          <p class="cs-text"></p>
+          <div class="cs-button-group">
+              <a href="{{ url_for('login') }}" class="cs-button-solid cs-button1">Login</a>
+          </div>
+      </div>
+  </div>
+  <img class="bck-image" src="https://files.oaiusercontent.com/file-K6q4SePxaWVKM4G41mfSa5?se=2025-03-01T22%3A21%3A42Z&sp=r&sv=2024-08-04&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3D34fd5717-a966-4448-b757-7616c9581603.webp&sig=o2/GqpEQ8gz/e5vLyKa62NjHb06mSqhkueRpaXaM2tE%3D" alt="">
+  </section>
+
+{% endblock %}

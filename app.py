@@ -179,17 +179,7 @@ def forgot_password():
         else:
             flash('Email not found.', 'warning')
             return render_template('forgotPw.html', form=form)
-   #below sends gmail message
-   '''
-      msg = Message( 
-                'Hello', 
-                sender ='danotoriousg@gmail.com', 
-                recipients = ['glenntm1@live.com'] 
-               ) 
-   msg.body = 'Hello Flask message sent from Flask-Mail'
-   mail.send(msg) 
-   flash('Sent')
-   '''
+
    return render_template('forgotPw.html', form=form)
 
 @app.route('/reset-password/<token>', methods=['GET', 'POST'])
@@ -197,32 +187,30 @@ def reset_password(token):
     form = LoginForm()
     user = User.query.filter_by(reset_token=token).first()
     if not user or user.token_expiration < datetime.now():
-        return "Token is invalid or expired."
+        return render_template('pwTokenExpiration.html')
     
     if request.method == 'POST':
         new_password = request.form['password']
-        print(f"New password: {new_password}")  # Debugging
         user.password = bcrypt.generate_password_hash(new_password).decode('utf-8')
-        print(f"New hashed password: {user.password}")  # Debugging
         user.reset_token = None
         user.token_expiration = None
         
         try:
             db.session.commit()
-            print("Password hash updated successfully.")
-
-            # Double-check if password is updated
             updated_user = User.query.filter_by(email=user.email).first()
-            print(f"Updated password in DB: {updated_user.password}")  # Debugging
 
         except Exception as e:
             db.session.rollback()  # Rollback in case of an error
             print(f"Error updating password: {e}")
             return "An error occurred while updating your password."
 
-        return "Password successfully reset."   
+        return render_template('resetPwConfirmation.html')
     
     return render_template('resetPw.html', form=form, token=token)
+
+@app.route('/token-password-expiration')
+def tokenPasswordExpiration():
+    return render_template('pwTokenExpiration.html')
 
 @app.route('/reset-password-confirmation')
 def resetPasswordConfirmation():
@@ -331,11 +319,12 @@ def edit_review(review_id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    print("CSRF Token from form:", form.csrf_token.data, flush=True)
+    #prevents logged in user from access the login page
+    if current_user.is_authenticated:  
+        return redirect(url_for('user_dashboard'))
 
 
     if form.validate_on_submit():
-        print("Form validated successfully!", flush=True)
         user = User.query.filter_by(email=form.email.data).first()
 
         if not user:
@@ -343,10 +332,8 @@ def login():
             return redirect(url_for('login'))
 
         db.session.refresh(user)  # Ensures we have the latest data from the DB
-        print(f"Stored password hash: {user.password}")  # Debugging
 
         if bcrypt.check_password_hash(user.password, form.password.data):
-            print("Password matched!")
             login_user(user)
             return redirect(url_for('user_dashboard'))
         else:
