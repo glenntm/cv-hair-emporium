@@ -58,7 +58,7 @@ header {
     font-size: var(--headerFontSize);
     font-weight: 900;
     line-height: 1.2em;
-    text-align: inherit;
+    /*text-align: inherit;*/
     max-width: 50.75rem;
     margin: 0 0 1rem 0;
     color: var(--headerColor);

@@ -24,11 +24,14 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
 import secrets 
 from sqlalchemy.orm import joinedload
+from flask_bootstrap import Bootstrap5
+
 
 
 
 
 app = Flask(__name__)
+bootstrap = Bootstrap5(app)
 json = FlaskJSON(app)
 bcrypt = Bcrypt(app)
 mail = Mail(app) # instantiate the mail class 
@@ -220,6 +223,10 @@ def reset_password(token):
         return "Password successfully reset."   
     
     return render_template('resetPw.html', form=form, token=token)
+
+@app.route('/reset-password-confirmation')
+def resetPasswordConfirmation():
+    return render_template('resetPwConfirmation.html')
 
 @app.route('/')
 def home():
