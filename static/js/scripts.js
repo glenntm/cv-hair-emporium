@@ -73,44 +73,27 @@ document.getElementById('closeModalBtn').addEventListener('click', function () {
 document.getElementById('closeModalX').addEventListener('click', function () {
   myModal.hide(); // Closes the modal
 });
+
+
 //Carousel Code
-document.addEventListener('DOMContentLoaded', () => {
-  const carouselContainer = document.querySelector('.carousel');
-  const prevBtn = document.getElementById("prevBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const carouselSlide = document.querySelector(".carousel-slide");
-  const carouselItems = document.querySelectorAll(".carousel-item");
+document.addEventListener("DOMContentLoaded", function() {
+  var myCarousel = document.querySelector('#carouselExampleControls');
+  var carousel = new bootstrap.Carousel(myCarousel, {
+      interval: 2000,
+      ride: 'carousel'
+  });
 
-  console.log('prevBtn:', prevBtn);
-  console.log('nextBtn:', nextBtn);
-  console.log('carouselSlide:', carouselSlide);
-  console.log('carouselItems:', carouselItems);
+  // Optional custom buttons
+  var prevButton = document.querySelector('.carousel-control-prev');
+  var nextButton = document.querySelector('.carousel-control-next');
 
-  let counter = 0;
+  prevButton.addEventListener('click', function () {
+      carousel.prev();
+  });
 
-  function showSlide(index) {
-      if (index < 0) {
-          counter = carouselItems.length - 1;
-      } else if (index >= carouselItems.length) {
-          counter = 0;
-      } else {
-          counter = index;
-      }
-      carouselSlide.style.transform = `translateX(${-counter * 100}%)`;
-      console.log(`Showing slide ${counter}`);
-  }
-  
-  prevBtn.addEventListener('click', (event) => {
- 
-    console.log('Prev button clicked');
-    showSlide(counter - 1);
-});
-
-nextBtn.addEventListener('click', (event) => {
-    console.log('Next button clicked');
-    showSlide(counter + 1);
-});
-
+  nextButton.addEventListener('click', function () {
+      carousel.next();
+  });
 });
 
 //function for services tab

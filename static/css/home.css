@@ -448,6 +448,12 @@ h2 {
 }
 
 
+/* Carousel */
+.carousel-img {
+    filter: brightness(50%);
+    height: 120vh;
+    object-fit: cover; 
+}
 
 .carousel {
     position: absolute;
