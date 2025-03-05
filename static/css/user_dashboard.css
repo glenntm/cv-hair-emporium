@@ -293,3 +293,12 @@
       margin: 1rem 0 0 0;
     }
   }
+
+  .cs-topper-dashboard {
+    text-align: center;
+  }
+
+  .cs-container-dashboard {
+    min-height: 100vh;
+  }
+  

@@ -495,15 +495,22 @@ def user_dashboard():
     # Sort the events by start time in descending order
     matching_events.sort(key=lambda x: x['start'], reverse=True)
 
-    # Debugging print
-    print(f"Session user: {session.get('user')}")
+    # Pagination setup
+    page = request.args.get('page', 1, type=int)
+    per_page = 5  # Number of items per page
+    total_events = len(matching_events)
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated_events = matching_events[start:end]
 
     return render_template(
         'user_dashboard.html',
         google_email=email,
         matching_events=matching_events,
         sessionType=user,
-        cal_response=response.text
+        cal_response=response.text,
+        page=page,
+        total_pages=(total_events + per_page - 1) // per_page  # Calculate total pages
     )
 
 

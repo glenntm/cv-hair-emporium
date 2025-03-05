@@ -7,7 +7,7 @@
 <!-- ============================================ -->
 
 <section id="events-1650">
-    <div class="cs-container">
+    <div class="cs-container cs-container-dashboard">
         <div class="cs-content">
             <picture class="cs-picture">
                 <!--Mobile Image-->
@@ -17,7 +17,7 @@
                 <img loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/People/business-meeting.jpeg" alt="busines meeting" width="522" height="609" aria-hidden="true">
             </picture>
             <div class="cs-text-wrapper">
-                <span class="cs-topper">Our Events</span>
+                <span class="cs-topper cs-topper-dashboard">Your Events</span>
                 <h2 class="cs-title">Appointment History</h2>
             </div>
         </div>
@@ -44,6 +44,16 @@
             </li>
             {% endfor %}
         </ul>
+        <!-- Pagination Controls -->
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('user_dashboard', page=page-1) }}">Previous</a>
+            {% endif %}
+            <span>Page {{ page }} of {{ total_pages }}</span>
+            {% if page < total_pages %}
+                <a href="{{ url_for('user_dashboard', page=page+1) }}">Next</a>
+            {% endif %}
+        </div>
     </div> 
 </section>
                                 
