@@ -44,17 +44,22 @@
             </li>
             {% endfor %}
         </ul>
-        <!-- Pagination Controls -->
-        <div class="pagination">
+    </div> 
+    <!-- Pagination Controls -->
+    <div class="pagination"> 
+        <div class="pagination-container">
             {% if page > 1 %}
-                <a href="{{ url_for('user_dashboard', page=page-1) }}">Previous</a>
+                <a class="review-button-solid" href="{{ url_for('user_dashboard', page=page-1) }}">Previous</a>
             {% endif %}
-            <span>Page {{ page }} of {{ total_pages }}</span>
+            <span>Page {{ page }} of {{ total_pages|int }}</span>  <!-- Ensure it's an integer -->
             {% if page < total_pages %}
-                <a href="{{ url_for('user_dashboard', page=page+1) }}">Next</a>
+                <a class="review-button-solid" href="{{ url_for('user_dashboard', page=page+1) }}">Next</a>
             {% endif %}
         </div>
-    </div> 
+</div>
+
+    </div>
+
 </section>
                                 
 <div class="cs-button-group">

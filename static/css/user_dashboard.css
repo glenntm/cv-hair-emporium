@@ -302,3 +302,13 @@
     min-height: 100vh;
   }
   
+.pagination {
+  justify-content: center;
+
+}
+
+.pagination-container {
+  display: flex; /* Lay out children in a row */
+  align-items: center; /* Align items vertically at the center */
+  gap: 1rem; /* Space between the span and the button */
+}

@@ -19,11 +19,9 @@ import os
 import uuid
 import requests
 from flask_mail import Mail, Message
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
 import secrets 
-from sqlalchemy.orm import joinedload
+from math import ceil
 from flask_bootstrap import Bootstrap5
 
 
@@ -501,17 +499,22 @@ def user_dashboard():
     total_events = len(matching_events)
     start = (page - 1) * per_page
     end = start + per_page
+    total_events = len(matching_events)
+    total_pages = ceil(total_events / per_page)  # Ensure this is always a whole number
     paginated_events = matching_events[start:end]
+    print(f"Total events: {total_events}, Per Page: {per_page}, Total Pages: {total_pages}")
+
 
     return render_template(
         'user_dashboard.html',
         google_email=email,
-        matching_events=matching_events,
+        matching_events=paginated_events,  # ✅ Send paginated events instead of all
         sessionType=user,
         cal_response=response.text,
         page=page,
-        total_pages=(total_events + per_page - 1) // per_page  # Calculate total pages
+        total_pages=total_pages  # ✅ Pass `total_pages` as an integer
     )
+
 
 
 @app.route('/logout', methods=['GET', 'POST'])
