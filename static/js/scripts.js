@@ -139,7 +139,7 @@ function onSuccess(googleUser) {
     link: "https://www.dropbox.com/scl/fo/w67ugqfuvjgrjn5e7wtl5/AAiHMRNQrko0IovsAB9MndM?rlkey=gfnnr93l09cuzw8uia95ip3ee&st=axyakoku&dl=0",
     file: {
       // Sets the zoom mode for embedded files. Defaults to 'best'.
-      zoom: "best" // or "fit"
+      zoom: "best" // best or "fit"
     },
     folder: {
       // Sets the view mode for embedded folders. Defaults to 'list'.

@@ -1,6 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy 
 from flask_login import UserMixin
 from datetime import datetime
+from sqlalchemy.dialects.postgresql import ARRAY  # For PostgreSQL
+
 
 db = SQLAlchemy()
 
@@ -21,6 +23,7 @@ class User(db.Model, UserMixin):
     token_expiration = db.Column(db.DateTime, nullable=True)
     # Relationship to reviews
     reviews = db.relationship('Review', back_populates='user', cascade="all, delete-orphan")
+    old_passwords = db.Column(ARRAY(db.String), default=[])
 
 class Review(db.Model):
     __tablename__ = "reviews"

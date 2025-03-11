@@ -7,7 +7,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, Form, validators
 from wtforms.validators import InputRequired,Length, ValidationError,DataRequired, Email, length, Regexp
 from models import User, db, connect_db, Review
-from flask_bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt, check_password_hash, generate_password_hash
 import psycopg2
 from psycopg2 import sql
 from flask_json import FlaskJSON, JsonError, json_response
@@ -19,10 +19,11 @@ import os
 import uuid
 import requests
 from flask_mail import Mail, Message
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import secrets 
 from math import ceil
 from flask_bootstrap import Bootstrap5
+from werkzeug.security import check_password_hash
 
 
 
@@ -184,28 +185,47 @@ def forgot_password():
 def reset_password(token):
     form = LoginForm()
     user = User.query.filter_by(reset_token=token).first()
+
     if not user or user.token_expiration < datetime.now():
         return render_template('pwTokenExpiration.html')
-    
+
     if request.method == 'POST':
         new_password = request.form['password']
-        user.password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+
+        # Check if the new password matches the current password
+        if bcrypt.check_password_hash(user.password, new_password):
+            return "You cannot reuse your current password. Please choose a different password."
+
+        # Optionally, check against old passwords (if you store them)
+        if user.old_passwords:
+            for old_pw in user.old_passwords:
+                if bcrypt.check_password_hash(old_pw, new_password):
+                    return "You cannot reuse a previous password. Please choose a different password."
+
+        # Hash the new password
+        new_password_hashed = bcrypt.generate_password_hash(new_password).decode('utf-8')
+
+        # Update the user's password and store the old password
+        if user.old_passwords is None:
+            user.old_passwords = []  # Initialize old_passwords if it's None
+
+        user.old_passwords.append(user.password)  # Save the current password as the previous password
+
+        # Update user's password, reset token, and expiration
+        user.password = new_password_hashed
         user.reset_token = None
         user.token_expiration = None
-        
+
         try:
             db.session.commit()
-            updated_user = User.query.filter_by(email=user.email).first()
-
         except Exception as e:
             db.session.rollback()  # Rollback in case of an error
             print(f"Error updating password: {e}")
             return "An error occurred while updating your password."
 
         return render_template('resetPwConfirmation.html')
-    
-    return render_template('resetPw.html', form=form, token=token)
 
+    return render_template('resetPw.html', form=form, token=token)
 @app.route('/token-password-expiration')
 def tokenPasswordExpiration():
     return render_template('pwTokenExpiration.html')
@@ -227,7 +247,6 @@ def gallery():
 
 @app.route('/reviews', methods=['GET', 'POST'])
 def reviews_page():
-    print(f"Current User ID: {current_user.id}")
 
     # Handle new review submission (if applicable)
     if request.method == 'POST':
@@ -445,74 +464,76 @@ def register():
 @app.route('/user_dashboard', methods=['GET', 'POST'])
 @login_required
 def user_dashboard():
-    # Check if 'user' exists in session
+    # Get the user's email (from Google SSO or fallback to registered email)
     user = session.get('user')
-    if user:
-        # Google SSO email
-        email = user.get('email')  # Get the email from Google session
-    else:
-        # Fallback to the email captured during registration
-        # Assuming 'current_user' contains the registered user's details
-        email = current_user.email  # Use your ORM model or context to fetch
-
+    email = user.get('email') if user else current_user.email
 
 
     cal_info = cal_json['data']
-    matching_events = []
+    upcoming_events = []
+    past_events = []
 
-    # Loop through cal_json and collect all matches based on the email in bookingFieldsResponses
+    # Get current date and time
+    now = datetime.now(timezone.utc)  # Make now timezone-aware
+
+
+    # Loop through calendar data and filter events
     for item in cal_info:
         if 'bookingFieldsResponses' in item and 'email' in item['bookingFieldsResponses']:
             event_email = item['bookingFieldsResponses']['email']
-            # Only add events where the attendee's email matches the logged-in user's email
             if event_email == email:
-                # Parse the start date
                 start_time = datetime.fromisoformat(item['start'].replace('Z', '+00:00'))
-                
-                # Calculate the end time by adding the duration to the start time
                 end_time = start_time + timedelta(minutes=item['duration'])
 
-                # Format the start time, end time, and other fields
                 event = {
-                    'title': item['title'].split(' between ')[0],  # Extracting the part before "between"
-                    'status': item['status'].capitalize(),  # Capitalizing the status
+                    'title': item['title'].split(' between ')[0],  
+                    'status': item['status'].capitalize(),  
                     'start': start_time,
                     'end': end_time,
-                    'start_time': start_time.strftime('%I:%M %p'),  # 12-hour format with AM/PM
-                    'end_time': end_time.strftime('%I:%M %p'),  # End time in 12-hour format
+                    'start_time': start_time.strftime('%I:%M %p'),
+                    'end_time': end_time.strftime('%I:%M %p'),
                     'day': start_time.day,
-                    'month_abbreviation': start_time.strftime('%b'),  # Abbreviated month (e.g., "Oct")
+                    'month_abbreviation': start_time.strftime('%b'),
                     'event_type': item['eventType']['slug'],
                     'duration': item['duration'],
-                    'time_zone': item['hosts'][0]['timeZone'],  # Assuming timeZone is in hosts
+                    'time_zone': item['hosts'][0]['timeZone'],
                     'meeting_url': item['meetingUrl'],
-                    "year": start_time.year,
+                    'year': start_time.year,
                 }
-                matching_events.append(event)
 
-    # Sort the events by start time in descending order
-    matching_events.sort(key=lambda x: x['start'], reverse=True)
+                # Categorize events
+                if start_time >= now:
+                    upcoming_events.append(event)
+                else:
+                    past_events.append(event)
+
+    # Sort upcoming events (earliest first) and past events (latest first)
+    upcoming_events.sort(key=lambda x: x['start'])
+    past_events.sort(key=lambda x: x['start'], reverse=True)
 
     # Pagination setup
     page = request.args.get('page', 1, type=int)
-    per_page = 5  # Number of items per page
-    total_events = len(matching_events)
-    start = (page - 1) * per_page
-    end = start + per_page
-    total_events = len(matching_events)
-    total_pages = ceil(total_events / per_page)  # Ensure this is always a whole number
-    paginated_events = matching_events[start:end]
-    print(f"Total events: {total_events}, Per Page: {per_page}, Total Pages: {total_pages}")
+    per_page = 5  
 
+    def paginate(events):
+        total = len(events)
+        start = (page - 1) * per_page
+        end = start + per_page
+        total_pages = ceil(total / per_page)
+        return events[start:end], total_pages
+
+    paginated_upcoming, total_pages_upcoming = paginate(upcoming_events)
+    paginated_past, total_pages_past = paginate(past_events)
 
     return render_template(
         'user_dashboard.html',
         google_email=email,
-        matching_events=paginated_events,  # ✅ Send paginated events instead of all
+        upcoming_events=paginated_upcoming,
+        past_events=paginated_past,
         sessionType=user,
-        cal_response=response.text,
         page=page,
-        total_pages=total_pages  # ✅ Pass `total_pages` as an integer
+        total_pages_upcoming=total_pages_upcoming,
+        total_pages_past=total_pages_past
     )
 
 

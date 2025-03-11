@@ -1,3 +1,11 @@
-.dropbox-embed-container {
+.dropbox-embed {
     margin-top: 2rem;
+}
+
+
+
+@media only screen and (min-width: 1000px) {
+    .gallery {
+        margin-bottom: 9rem;
+    }
 }

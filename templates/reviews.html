@@ -17,6 +17,7 @@
         <div class="cs-content">
             <span class="cs-topper">Reviews</span>
             <h2 class="cs-title">What Our Clients Say</h2>
+            {% if current_user.is_authenticated %}
             <div class="toggle-buttons">
                 <a 
                     href="{{ url_for('reviews_page', filter='all') }}" 
@@ -29,6 +30,7 @@
                     My Reviews
                 </a>
             </div>
+            {% endif %}
             <ul class="cs-card-group">
                 {% for review in reviews %}
                 <li class="cs-item">
