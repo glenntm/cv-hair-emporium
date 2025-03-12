@@ -312,3 +312,20 @@
   align-items: center; /* Align items vertically at the center */
   gap: 1rem; /* Space between the span and the button */
 }
+/*@media only screen and (min-width: 1000px) {
+  .toggle-buttons {
+    padding-left: 45rem;
+  }
+
+}*/
+
+.toggle-buttons {
+  display: flex;
+  justify-content: center; /* Centers buttons horizontally */
+  gap: 10px; /* Adds space between buttons */
+  margin-bottom: 20px; /* Creates space between buttons and the list */
+}
+
+.cs-topper-name {
+  text-align: center;
+}

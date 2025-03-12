@@ -7,6 +7,17 @@
 <!-- ============================================ -->
 
 <section id="events-1650">
+    <!-- Appointment List -->
+    <div class="toggle-buttons">
+        <a href="{{ url_for('user_dashboard', filter='upcoming') }}" 
+           class="toggle-button {% if request.args.get('filter', 'upcoming') == 'upcoming' %}active{% endif %}">
+            Upcoming
+        </a>
+        <a href="{{ url_for('user_dashboard', filter='past') }}" 
+           class="toggle-button {% if request.args.get('filter') == 'past' %}active{% endif %}">
+            Past
+        </a>
+    </div>
     <div class="cs-container cs-container-dashboard">
         <div class="cs-content">
             <picture class="cs-picture">
@@ -17,6 +28,7 @@
                 <img loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/People/business-meeting.jpeg" alt="busines meeting" width="522" height="609" aria-hidden="true">
             </picture>
             <div class="cs-text-wrapper">
+                <span class="cs-topper cs-topper-name">Hello {{ google_first_name }}</span>
                 <h2 class="cs-title">Appointment History</h2>
                 <!-- Toggle Buttons -->
             </div>
@@ -58,23 +70,16 @@
                                     {{ event.start_time }} - {{ event.end_time }} {{ event.time_zone }}
                                 </span>
                             </div>
+                            <div class="cs-button-wrapper">
+                                <a href="{{ event.meeting_url }}" class="cs-button-solid">Book Again</a>
+                            </div>
                         </div>
                     </li>
                 {% endfor %}
             {% endif %}
         </ul>
     </div>
-    <!-- Appointment List -->
-    <div class="toggle-buttons">
-        <a href="{{ url_for('user_dashboard', filter='upcoming') }}" 
-           class="toggle-button {% if request.args.get('filter', 'upcoming') == 'upcoming' %}active{% endif %}">
-            Upcoming
-        </a>
-        <a href="{{ url_for('user_dashboard', filter='past') }}" 
-           class="toggle-button {% if request.args.get('filter') == 'past' %}active{% endif %}">
-            Past
-        </a>
-    </div>
+    
 
     <!-- Pagination Controls -->
     <div class="pagination"> 

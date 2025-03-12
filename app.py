@@ -269,7 +269,7 @@ def reviews_page():
 
     # Pagination setup
     page = request.args.get('page', 1, type=int)
-    per_page = 2  # Number of items per page
+    per_page = 5  # Number of items per page
     pagination = reviews_query.order_by(Review.created_at.desc()).paginate(page=page, per_page=per_page)
 
     # Reviews for the current page
@@ -466,8 +466,10 @@ def register():
 def user_dashboard():
     # Get the user's email (from Google SSO or fallback to registered email)
     user = session.get('user')
+  
     email = user.get('email') if user else current_user.email
-
+    
+    google_first_name = current_user.first_name
 
     cal_info = cal_json['data']
     upcoming_events = []
@@ -484,6 +486,7 @@ def user_dashboard():
             if event_email == email:
                 start_time = datetime.fromisoformat(item['start'].replace('Z', '+00:00'))
                 end_time = start_time + timedelta(minutes=item['duration'])
+
 
                 event = {
                     'title': item['title'].split(' between ')[0],  
@@ -513,7 +516,7 @@ def user_dashboard():
 
     # Pagination setup
     page = request.args.get('page', 1, type=int)
-    per_page = 5  
+    per_page = 8  
 
     def paginate(events):
         total = len(events)
@@ -533,7 +536,8 @@ def user_dashboard():
         sessionType=user,
         page=page,
         total_pages_upcoming=total_pages_upcoming,
-        total_pages_past=total_pages_past
+        total_pages_past=total_pages_past,
+        google_first_name=google_first_name
     )
 
 
