@@ -11,7 +11,7 @@
     }
     #reviews-1641 .cs-container {
       width: 100%;
-      max-width: 80rem;
+      max-width: none;
       margin: auto;
       display: flex;
       flex-direction: column;
@@ -23,7 +23,6 @@
       /* set text align to left if content needs to be left aligned */
       text-align: left;
       width: 100%;
-      max-width: 43.375rem;
       display: flex;
       flex-direction: column;
       /* centers content horizontally, set to flex-start to left align */
