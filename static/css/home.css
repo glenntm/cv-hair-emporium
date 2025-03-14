@@ -556,3 +556,10 @@ li.active .sub-section {
     margin-top: 5rem;
 }
 
+.add-on-notice {
+    font-size: 16px;
+    font-weight: bold;
+    color: #9c27b0; /* Adjust color to match your theme */
+    margin-bottom: 15px;
+    text-align: center;
+}
