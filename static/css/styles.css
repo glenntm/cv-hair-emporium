@@ -89,6 +89,7 @@ header {
       /* prevents padding from affecting height and width */
       box-sizing: border-box;
       box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+      background-color: #1f1f1f;
       /*position: fixed;
       z-index: 10000;*/
       transition: transform .3s;
@@ -116,6 +117,7 @@ header {
       opacity: 1;
       transform: scaleY(1);
       transition-delay: .15s;
+      background-color: #1f1f1f;
     }
     #cs-navigation.cs-active .cs-li {
       transform: translateY(0);
@@ -369,7 +371,7 @@ header {
       line-height: 1.2em;
       text-decoration: none;
       margin: 0;
-      color: var(--headerColor);
+      color: white;
       display: inline-block;
       position: relative;
     }
@@ -580,7 +582,7 @@ header {
       padding: 0;
       /* prevents padding from affecting height and width */
       box-sizing: border-box;
-      background-color: #fff;
+      background-color: #1f1f1f;
       box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
       position: fixed;
       z-index: 10000;
@@ -720,7 +722,7 @@ header {
       line-height: 1.5em;
       text-decoration: none;
       margin: 0;
-      color: var(--headerColor);
+      color: white;
       display: block;
       position: relative;
       transition: color .3s;
