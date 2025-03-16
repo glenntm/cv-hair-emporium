@@ -452,6 +452,7 @@ h2 {
 .carousel-img {
     filter: brightness(50%);
     height: 100vh;
+    width: 100%;
     object-fit: cover; 
 }
 
