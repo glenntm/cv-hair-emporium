@@ -65,14 +65,13 @@
 <!-- ============================================ -->
 <!--                   Services                      -->
 <!-- ============================================ -->
-
 <section id="services">
     
     <h2 class="cs-title our-services-title">Our Services</h2>
     
 
-    <div class="section-container">
-        <!-- Clickable Sections -->
+   <!-- <div class="section-container">
+
         <div class="section-link active" onclick="openSection(event, 'haircuts')">
             <h3>Braiding</h3>
         </div>
@@ -82,12 +81,177 @@
         <div class="section-link" onclick="openSection(event, 'styling')">
             <h3>Miscellaneous</h3>
         </div>
-    </div>
+    </div> -->
     <p class="add-on-notice">
         <strong>Note:</strong> Hair coloring and trimming services can be added to any service for an additional charge.
     </p>
 
     <!-- Section Content -->
+
+    <div id="haircuts" class="section-content active">
+        <ul>
+            <li onclick="toggleSubSection(event)">
+                Consultation<span class="price">$50</span>  
+            </li>
+            <li onclick="toggleSubSection(event)">
+                Locs <span class="price"></span>
+                <span class="arrow">&#9660;</span>
+                <div class="sub-section">
+                    <p class="service-sub-section">Starter Locs <span class="price">$200+</span></p>
+                </div>
+                <div class="sub-section">
+                    <p class="service-sub-section outer" onclick="toggleInnerSubSection(event)">Instant Locs<span class="price"></span></p>
+                    <div class="inner-sub-section">
+                        <p class="service-sub-section inner">Above Shoulders <span class="price">$350+</span></p>
+                        <p class="service-sub-section inner">Shoulder Length or Longer <span class="price">$450+</span></p>
+                    </div>
+                </div>
+                <div class="sub-section">
+                    <p class="service-sub-section">Locs Extensions <span class="price">$650+</span></p>
+                    <p class="service-sub-section">Loc Retwist <span class="price">$115+</span></p>
+                </div>
+                <div class="sub-section">
+                    <p class="service-sub-section outer" onclick="toggleInnerSubSection(event)">Loc Retwist Style<span class="price"></span></p>
+                    <div class="inner-sub-section">
+                        <p class="service-sub-section inner">Barrel Twist/Braids <span class="price">$140+</span></p>
+                        <p class="service-sub-section inner">Loc Buns/Ponytails <span class="price">$135+</span></p>
+                        <p class="service-sub-section inner">2 Strand Twist/Ropes <span class="price">$150+</span></p>
+                        <p class="service-sub-section inner">Loc Rod Set/Curls <span class="price">$175+</span></p>
+                    </div>
+                </div>
+                <div class="sub-section">
+                    <p class="service-sub-section">Loc Maintenance <span class="price">Price Varies</span></p>
+                </div>
+                <div class="sub-section">
+                    <p class="service-sub-section outer" onclick="toggleInnerSubSection(event)">Color Touchup/Retwist<span class="price">$160+</span></p>
+                    <div class="inner-sub-section">
+                        <p class="service-sub-section inner">Color Retouch/Retwist <span class="price"></span></p>
+                        <p class="service-sub-section inner">Loc Retwist <span class="price"></span></p>
+                    </div>
+                </div>
+                <div class="sub-section">
+                    <p class="service-sub-section outer" onclick="toggleInnerSubSection(event)">Color Rejuvenation/Retwist and Style<span class="price">$190+</span></p>
+                    <div class="inner-sub-section">
+                        <p class="service-sub-section inner">Color Retouch/Retwist <span class="price"></span></p>
+                        <p class="service-sub-section inner">Loc Retwist <span class="price"></span></p>
+                    </div>    
+                </div>
+                <div class="sub-section">
+                    <p class="service-sub-section outer" onclick="toggleInnerSubSection(event)">Loc Removal/Comb Out<span class="price"></span></p>
+                    <div class="inner-sub-section">
+                        <p class="service-sub-section inner">Short or Starter Comb Out <span class="price">$225+</span></p>
+                        <p class="service-sub-section inner">Shoulder Length <span class="price">$300+</span></p>
+                        <p class="service-sub-section inner">Mid-Back or Longer <span class="price">$400+</span></p>
+                    </div>
+                </div>
+                <div class="sub-section">
+                    <p class="service-sub-section inner">Dry Retwist/Restyle <span class="price">$80+</span></p>
+                </div>
+            </li>
+            <li onclick="toggleSubSection(event)">
+                Braiding <span class="price"></span>
+                <span class="arrow">&#9660;</span>
+                <div class="sub-section">
+                    <p class="service-sub-section outer" onclick="toggleInnerSubSection(event)">Box Braids<span class="price"></span></p>
+                    <div class="inner-sub-section">
+                        <p class="service-sub-section inner">Lower Back <span class="price">$300+</span></p>
+                        <p class="service-sub-section inner">Mid-Back Length <span class="price">$250+</span></p>
+                        <p class="service-sub-section inner">Bob Length <span class="price">$200+</span></p>
+                        <p class="service-sub-section inner">Butt-Length or Longer <span class="price">$360+</span></p>
+                    </div>
+                </div>
+                <div class="sub-section">
+                    <p class="service-sub-section outer" onclick="toggleInnerSubSection(event)">Knotless Braids<span class="price"></span></p>
+                    <div class="inner-sub-section">
+                        <p class="service-sub-section inner">Natural Hair <span class="price">$130+</span></p>
+                        <p class="service-sub-section inner">Mid-Back Length <span class="price">$275+</span></p>
+                        <p class="service-sub-section inner">Butt Length <span class="price">$350+</span></p>
+                        <p class="service-sub-section inner">Thigh Length or Longer <span class="price">$425+</span></p>
+                    </div>
+                </div>
+                <div class="sub-section">
+                    <p class="service-sub-section">Butterfly Locs <span class="price">$175+</span></p>
+                    <p class="service-sub-section">Crochet Braid Styles <span class="price">$150+</span></p>
+                    <p class="service-sub-section">Lemonade Braids <span class="price">$200+</span></p>
+                    <p class="service-sub-section">Soft Locs <span class="price">$250+</span></p>
+                    <p class="service-sub-section">Feed-in Braids <span class="price">$50+</span></p>
+                    <p class="service-sub-section">Jumbo Knotless <span class="price">$180+</span></p>
+                </div>
+                <div class="sub-section">
+                    <p class="service-sub-section outer" onclick="toggleInnerSubSection(event)">Kinky Twist (Half Head)<span class="price"></span></p>
+                    <div class="inner-sub-section">
+                        <p class="service-sub-section inner">Hair Not Provided <span class="price">$150+</span></p>
+                        <p class="service-sub-section inner">Hair Provided <span class="price">$190+</span></p>
+                    </div>
+                </div>
+                <div class="sub-section">
+                    <p class="service-sub-section outer" onclick="toggleInnerSubSection(event)">Kinky Twist<span class="price"></span></p>
+                    <div class="inner-sub-section">
+                        <p class="service-sub-section inner">Hair Not Provided <span class="price">$375+</span></p>
+                        <p class="service-sub-section inner">Hair Provided <span class="price">$325+</span></p>
+                    </div>
+                </div>
+            </li>
+            <li onclick="toggleSubSection(event)">
+                Miscellaneous Hair Services<span class="price"></span>  
+                <span class="arrow">&#9660;</span>
+                <div class="sub-section">
+                    <p class="service-sub-section">Color <span class="price">$75+</span></p>
+                </div>
+                <div class="sub-section">
+                    <p class="service-sub-section outer" onclick="toggleInnerSubSection(event)">Color Retouch/Rejuvenation<span class="price"></span></p>
+                    <div class="inner-sub-section">
+                        <p class="service-sub-section inner">Color Rejuvenation<span class="price">$75+</span></p>
+                        <p class="service-sub-section inner">Root Touch Up <span class="price">$45+</span></p>
+                    </div>
+                </div>
+                <div class="sub-section">
+                    <p class="service-sub-section inner">Silk Press <span class="price">$80+</span></p>
+                    <p class="service-sub-section inner">Women's Haircut (No Clippers) <span class="price">$45+</span></p>
+                    <p class="service-sub-section inner">Blow Out <span class="price">$50+</span></p>
+                    <p class="service-sub-section inner">Ponytail <span class="price">$50+</span></p>
+                    <p class="service-sub-section inner">2 Ponytails <span class="price">$65+</span></p>
+                    <p class="service-sub-section inner">Quick Weak Styles <span class="price">$100+</span></p>
+                    <p class="service-sub-section inner">Sew-in with Hair Out <span class="price">$140+</span></p>
+                    <p class="service-sub-section inner">Sew-in Closure Installs <span class="price">$140+</span></p>
+                    <p class="service-sub-section inner">Wig Install <span class="price">$140+</span></p>
+                </div>
+            </li>
+            <li onclick="toggleSubSection(event)">
+                Men's Styling<span class="price"></span> 
+                <span class="arrow">&#9660;</span> 
+                <div class="sub-section">
+                    <p class="service-sub-section inner">Braids <span class="price">$95+</span></p>
+                    <p class="service-sub-section inner">Specialty Braids <span class="price">$120+</span></p>
+                    <p class="service-sub-section inner">2 Strand Twist <span class="price">$100+</span></p>
+                    <p class="service-sub-section inner">Individial Box Braids <span class="price">$100+</span></p>
+                    <p class="service-sub-section inner">Haircut/Trim (No Clippers) <span class="price">$20+</span></p>
+                </div>
+            </li>
+            <li onclick="toggleSubSection(event)">
+                Wicks Maintenance<span class="price"></span> 
+                <span class="arrow">&#9660;</span> 
+                <div class="sub-section">
+                    <p class="service-sub-section inner">Wick Touchup<span class="price">$130+</span></p>
+                </div>
+            </li>
+            <li onclick="toggleSubSection(event)">
+                Kid Services<span class="price"></span> 
+                <span class="arrow">&#9660;</span> 
+                <div class="sub-section">
+                    <p class="service-sub-section inner">Kids Braids 12 & Under<span class="price">$65+</span></p>
+                    <p class="service-sub-section inner">Kids Starter Locs (Under 12) <span class="price">$65+</span></p>
+                    <p class="service-sub-section inner">Kids Retwist (Under 12) <span class="price">$65+</span></p>
+                    <p class="service-sub-section inner">Kids Retwist/Style (Under 12) <span class="price">$80+</span></p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<!-- SECOND SERVICES SECTION-->
+<!--<section id="services">
+     Section Content 
 
     <div id="haircuts" class="section-content active">
         <ul>
@@ -202,7 +366,7 @@
             <li>Women's Haircut (No Clippers) <span class="price">$45</span></li>
         </ul>        
     </div>
-</section>
+</section> -->
 
 <!-- ============================================ -->
 <!--                   Stats                      -->

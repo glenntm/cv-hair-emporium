@@ -172,8 +172,23 @@ function onSuccess(googleUser) {
     });
 });
 
-// Sub Accordian Services
 function toggleSubSection(event) {
+    event.stopPropagation();
+    const li = event.currentTarget;
+    const subSection = li.querySelector('.sub-section');
+    const arrow = li.querySelector('.arrow');
+
+    if (li.classList.contains('active')) {
+        li.classList.remove('active');
+        subSection.style.maxHeight = '0';
+    } else {
+        li.classList.add('active');
+        subSection.style.maxHeight = subSection.scrollHeight + 'px';
+    }
+}
+
+function toggleSubSection(event) {
+  event.stopPropagation();
   const li = event.currentTarget;
   const subSection = li.querySelector('.sub-section');
   const arrow = li.querySelector('.arrow');
@@ -181,13 +196,26 @@ function toggleSubSection(event) {
   if (li.classList.contains('active')) {
       li.classList.remove('active');
       subSection.style.maxHeight = '0';
-      subSection.style.padding = '0 10px';
   } else {
       li.classList.add('active');
       subSection.style.maxHeight = subSection.scrollHeight + 'px';
-      subSection.style.padding = '10px';
   }
 }
+
+function toggleInnerSubSection(event) {
+  event.stopPropagation();
+  const p = event.currentTarget;
+  const innerSubSection = p.nextElementSibling;
+
+  if (p.classList.contains('active')) {
+      p.classList.remove('active');
+      innerSubSection.style.maxHeight = '0';
+  } else {
+      p.classList.add('active');
+      innerSubSection.style.maxHeight = innerSubSection.scrollHeight + 'px';
+  }
+}
+
 
 
 
