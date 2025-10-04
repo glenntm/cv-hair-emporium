@@ -80,6 +80,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = f'{os.getenv("DATABASE_SECRET")}'
 
+# Create database tables
+with app.app_context():
+    db.create_all()
+    print("Database tables created successfully!")
+
 connect_db(app)
 
 
