@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
-from secret import database_username, database_secret, databse_name, databse_password, google_client_ID, google_client_secret, flask_secret,google_password, cal_bearer_token, gmail_password, crsf_secret
+# Environment variables are now loaded using os.getenv()
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, Form, validators
 from wtforms.validators import InputRequired,Length, ValidationError,DataRequired, Email, length, Regexp
@@ -36,32 +36,32 @@ bcrypt = Bcrypt(app)
 mail = Mail(app) # instantiate the mail class 
 
 #for CSRF token
-app.config['SECRET_KEY'] = crsf_secret
+app.config['SECRET_KEY'] = os.getenv("CRSF_SECRET")
 
 
 # configuration of mail 
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USERNAME'] = 'danotoriousg@gmail.com'
-app.config['MAIL_PASSWORD'] = gmail_password
+app.config['MAIL_PASSWORD'] = os.getenv("GMAIL_PASSWORD")
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 mail = Mail(app) 
 
 
 #database setup
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{database_username}:{databse_password}@localhost:5432/{databse_name}'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{os.getenv("DATABASE_USERNAME")}:{os.getenv("DATABASE_PASSWORD")}@localhost:5432/{os.getenv("DATABASE_NAME")}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = f'{database_secret}'
+app.config['SECRET_KEY'] = f'{os.getenv("DATABASE_SECRET")}'
 
 connect_db(app)
 
 
 db_host = 'localhost'
 db_port = '5432'  # Default PostgreSQL port
-db_name = databse_name
-db_user = database_username
-db_password = databse_password
+db_name = os.getenv("DATABASE_NAME")
+db_user = os.getenv("DATABASE_USERNAME")
+db_password = os.getenv("DATABASE_PASSWORD")
 bcrypt = Bcrypt(app)
 
 migrate = Migrate(app, db)
@@ -76,10 +76,10 @@ def load_user(user_id):
 
 #for google sso setup
 appConf = {
-    "OAUTH2_CLIENT_ID": f"{google_client_ID}",
-    "OAUTH2_CLIENT_SECRET": f"{google_client_secret}",
+    "OAUTH2_CLIENT_ID": f"{os.getenv('GOOGLE_CLIENT_ID')}",
+    "OAUTH2_CLIENT_SECRET": f"{os.getenv('GOOGLE_CLIENT_SECRET')}",
     "OAUTH_META_URL": "https://accounts.google.com/.well-known/openid-configuration",
-    "FLASK_SECRET": f"{flask_secret}",
+    "FLASK_SECRET": f"{os.getenv('FLASK_SECRET')}",
     "FLASK_PORT":5000
 }
 
@@ -117,7 +117,7 @@ cal_url = "https://api.cal.com/v2/bookings"
 
 headers = {
     "cal-api-version": "2024-08-13",
-    "Authorization": f"{cal_bearer_token}"
+    "Authorization": f"{os.getenv('CAL_BEARER_TOKEN')}"
 }
 
 response = requests.request("GET", cal_url, headers=headers)
@@ -399,7 +399,7 @@ def googleCallback():
         print(f"JoseError: {e}")
         return redirect(url_for('googleLogin'))  # Redirect for other token issues
 
-    hashed_password = bcrypt.generate_password_hash(google_password).decode('utf-8')
+    hashed_password = bcrypt.generate_password_hash(os.getenv('GOOGLE_PASSWORD')).decode('utf-8')
 
     # Debugging state and token
     print("Session State After OAuth:", session.get('state'))
