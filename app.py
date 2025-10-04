@@ -57,16 +57,16 @@ db_host = os.getenv("PGHOST") or os.getenv("DATABASE_HOST") or "localhost"
 db_port = os.getenv("PGPORT") or os.getenv("DATABASE_PORT") or "5432"
 db_name = os.getenv("PGDATABASE") or os.getenv("DATABASE_NAME")
 
-# Debug: Print what we found
-print(f"DEBUG: db_user={db_user}")
-print(f"DEBUG: db_password={'***' if db_password else None}")
-print(f"DEBUG: db_host={db_host}")
-print(f"DEBUG: db_port={db_port}")
-print(f"DEBUG: db_name={db_name}")
+# Debug: Print all environment variables
+print("=== ALL ENVIRONMENT VARIABLES ===")
+for key, value in os.environ.items():
+    if 'PG' in key or 'DATABASE' in key:
+        print(f"{key}={value}")
+print("=== END ENVIRONMENT VARIABLES ===")
 
 # Check if we have all required values
 if not all([db_user, db_password, db_name]):
-    print(f"DEBUG: Missing variables - user: {bool(db_user)}, password: {bool(db_password)}, name: {bool(db_name)}")
+    print(f"ERROR: Missing variables - user: {bool(db_user)}, password: {bool(db_password)}, name: {bool(db_name)}")
     raise ValueError("Missing required database environment variables")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
