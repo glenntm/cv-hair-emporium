@@ -55,7 +55,7 @@ db_user = os.getenv("PGUSER") or os.getenv("DATABASE_USERNAME")
 db_password = os.getenv("PGPASSWORD") or os.getenv("DATABASE_PASSWORD") 
 db_host = os.getenv("PGHOST") or os.getenv("DATABASE_HOST") or "localhost"
 db_port = os.getenv("PGPORT") or os.getenv("DATABASE_PORT") or "5432"
-db_name = os.getenv("PGDATABASE") or os.getenv("DATABASE_NAME")
+db_name = os.getenv("PGDATABASE") or os.getenv("POSTGRES_DB") or os.getenv("DATABASE_NAME")
 
 # Debug: Print all environment variables
 print("=== ALL ENVIRONMENT VARIABLES ===")
@@ -64,10 +64,17 @@ for key, value in os.environ.items():
         print(f"{key}={value}")
 print("=== END ENVIRONMENT VARIABLES ===")
 
-# Check if we have all required values
+# TEMPORARY FIX: Use hardcoded values for Railway database
+# You'll need to replace these with your actual Railway database credentials
 if not all([db_user, db_password, db_name]):
-    print(f"ERROR: Missing variables - user: {bool(db_user)}, password: {bool(db_password)}, name: {bool(db_name)}")
-    raise ValueError("Missing required database environment variables")
+    print("WARNING: Using hardcoded database credentials - this is temporary!")
+    print("You need to add your Railway database credentials to fix this permanently.")
+    # Replace these with your actual Railway database credentials from your Railway dashboard
+    db_user = "postgres"  # Replace with your actual username
+    db_password = "ouLthFmvLijtkaFJdlWKLLvQXFfrHdye"  # Replace with your actual password  
+    db_host = "postgres.railway.internal"  # Replace with your actual host
+    db_port = "5432"  # Replace with your actual port
+    db_name = "railway"  # Replace with your actual database name
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
