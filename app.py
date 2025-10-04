@@ -50,18 +50,25 @@ mail = Mail(app)
 
 
 #database setup
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{os.getenv("PGUSER")}:{os.getenv("PGPASSWORD")}@{os.getenv("PGHOST")}:{os.getenv("PGPORT")}/{os.getenv("PGDATABASE")}'
+# Get database connection details with fallbacks
+db_user = os.getenv("PGUSER") or os.getenv("DATABASE_USERNAME")
+db_password = os.getenv("PGPASSWORD") or os.getenv("DATABASE_PASSWORD") 
+db_host = os.getenv("PGHOST") or os.getenv("DATABASE_HOST") or "localhost"
+db_port = os.getenv("PGPORT") or os.getenv("DATABASE_PORT") or "5432"
+db_name = os.getenv("PGDATABASE") or os.getenv("DATABASE_NAME")
+
+# Check if we have all required values
+if not all([db_user, db_password, db_name]):
+    raise ValueError("Missing required database environment variables")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = f'{os.getenv("DATABASE_SECRET")}'
 
 connect_db(app)
 
 
-db_host = os.getenv("PGHOST")
-db_port = os.getenv("PGPORT")
-db_name = os.getenv("PGDATABASE")
-db_user = os.getenv("PGUSER")
-db_password = os.getenv("PGPASSWORD")
+# These variables are already defined above with fallbacks
 bcrypt = Bcrypt(app)
 
 migrate = Migrate(app, db)
