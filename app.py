@@ -50,18 +50,18 @@ mail = Mail(app)
 
 
 #database setup
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{os.getenv("DATABASE_USERNAME")}:{os.getenv("DATABASE_PASSWORD")}@localhost:5432/{os.getenv("DATABASE_NAME")}'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = f'{os.getenv("DATABASE_SECRET")}'
 
 connect_db(app)
 
 
-db_host = 'localhost'
-db_port = '5432'  # Default PostgreSQL port
-db_name = os.getenv("DATABASE_NAME")
-db_user = os.getenv("DATABASE_USERNAME")
-db_password = os.getenv("DATABASE_PASSWORD")
+db_host = os.getenv("PGHOST")
+db_port = os.getenv("PGPORT")
+db_name = os.getenv("PGDATABASE")
+db_user = os.getenv("PGUSER")
+db_password = os.getenv("PGPASSWORD")
 bcrypt = Bcrypt(app)
 
 migrate = Migrate(app, db)
