@@ -55,24 +55,39 @@ const dropDowns = Array.from(document.querySelectorAll('#cs-navigation .cs-dropd
     }
 
 
-// Get the modal element
-var myModal = new bootstrap.Modal(document.getElementById('exampleModalCenter'), {
-  keyboard: false  // Prevents closing with the ESC key (optional)
-});
+// Get the modal element (with proper null checks)
+var modalElement = document.getElementById('exampleModalCenter');
+var myModal = null;
+
+if (modalElement) {
+  myModal = new bootstrap.Modal(modalElement, {
+    keyboard: false  // Prevents closing with the ESC key (optional)
+  });
+}
 
 // Get the open modal button and attach event listener
-document.getElementById('openModalBtn').addEventListener('click', function () {
-  myModal.show(); // Opens the modal
-});
+var openModalBtn = document.getElementById('openModalBtn');
+if (openModalBtn && myModal) {
+  openModalBtn.addEventListener('click', function () {
+    myModal.show(); // Opens the modal
+  });
 
-//Close modal
-document.getElementById('closeModalBtn').addEventListener('click', function () {
-  myModal.hide(); // Closes the modal
-});
+  //Close modal
+  var closeModalBtn = document.getElementById('closeModalBtn');
+  if (closeModalBtn) {
+    closeModalBtn.addEventListener('click', function () {
+      myModal.hide(); // Closes the modal
+    });
+  }
+}
 
-document.getElementById('closeModalX').addEventListener('click', function () {
-  myModal.hide(); // Closes the modal
-});
+// Close modal X button handler (with null check)
+var closeModalX = document.getElementById('closeModalX');
+if (closeModalX && myModal) {
+  closeModalX.addEventListener('click', function () {
+    myModal.hide(); // Closes the modal
+  });
+}
 
 
 //Carousel Code
@@ -133,21 +148,154 @@ function onSuccess(googleUser) {
   }
   
   
-  //display dropbox content
-  var options = {
-    // Shared link to Dropbox file
-    link: "https://www.dropbox.com/scl/fo/w67ugqfuvjgrjn5e7wtl5/AAiHMRNQrko0IovsAB9MndM?rlkey=gfnnr93l09cuzw8uia95ip3ee&st=axyakoku&dl=0",
-    file: {
-      // Sets the zoom mode for embedded files. Defaults to 'best'.
-      zoom: "best" // best or "fit"
-    },
-    folder: {
-      // Sets the view mode for embedded folders. Defaults to 'list'.
-      view: "grid",
-      headerSize: "normal" // or "small"
-    }
+  // Custom Dropbox Gallery
+  function loadCustomGallery() {
+    console.log('loadCustomGallery called');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const galleryGrid = document.getElementById('gallery-grid');
+    const galleryError = document.getElementById('gallery-error');
+    
+    // Show loading spinner
+    loadingSpinner.style.display = 'block';
+    galleryGrid.innerHTML = '';
+    galleryError.style.display = 'none';
+    
+    console.log('Fetching from /api/gallery-images/1/20');
+    // Fetch images from Flask API with pagination (20 images per page)
+    fetch('/api/gallery-images/1/20')
+      .then(response => {
+        console.log('Got response:', response);
+        return response.json();
+      })
+      .then(data => {
+        loadingSpinner.style.display = 'none';
+        
+        if (data.error) {
+          console.error('Gallery API error:', data.error);
+          galleryError.style.display = 'block';
+          return;
+        }
+        
+        if (!data.images || data.images.length === 0) {
+          galleryGrid.innerHTML = '<p style="text-align: center; color: #666; padding: 2rem;">No images found in gallery.</p>';
+          return;
+        }
+        
+        // Pagination is handled by backend - don't slice client-side
+        // Just display all images returned and show "Load More" if has_next is true
+        
+        console.log(`Total images returned from API: ${data.images.length}`);
+        console.log(`Pagination info:`, data.pagination);
+        
+        // Show all images returned (all 20)
+        data.images.forEach(image => {
+          const galleryItem = document.createElement('div');
+          galleryItem.className = 'gallery-item';
+          
+          galleryItem.innerHTML = `
+            <img src="${image.url}" alt="${image.name}" loading="lazy" style="opacity: 0; transition: opacity 0.3s ease;">
+            <div class="image-overlay">
+              <p class="image-name">${image.name}</p>
+            </div>
+          `;
+          
+          // Add fade-in effect when image loads
+          const img = galleryItem.querySelector('img');
+          img.onload = function() {
+            this.style.opacity = '1';
+          };
+          img.onerror = function() {
+            this.style.opacity = '0';
+            this.parentNode.innerHTML = '<p style="color: #e74c3c; padding: 2rem;">Failed to load image</p>';
+          };
+          
+          // Add click to open full size
+          galleryItem.addEventListener('click', function() {
+            const fullImageUrl = image.full_url || image.url;
+            window.open(fullImageUrl, '_blank');
+          });
+          
+          galleryGrid.appendChild(galleryItem);
+        });
+        
+        // Show Load More button if there are more pages
+        if (data.pagination && data.pagination.has_next) {
+          const loadMoreBtn = document.createElement('button');
+          loadMoreBtn.className = 'cs-button-solid cs-button1';
+          loadMoreBtn.textContent = `Load More`;
+          loadMoreBtn.style.cssText = 'display: block; margin: 2rem auto;';
+          
+          let currentPage = data.pagination.page;
+          
+          loadMoreBtn.addEventListener('click', function() {
+            currentPage++;
+            console.log(`Loading page ${currentPage}...`);
+            
+            // Fetch next page
+            fetch(`/api/gallery-images/${currentPage}/20`)
+              .then(response => response.json())
+              .then(nextData => {
+                // Append new images
+                nextData.images.forEach(image => {
+                  const galleryItem = document.createElement('div');
+                  galleryItem.className = 'gallery-item';
+                  
+                  galleryItem.innerHTML = `
+                    <img src="${image.url}" alt="${image.name}" loading="lazy" style="opacity: 0; transition: opacity 0.3s ease;">
+                    <div class="image-overlay">
+                      <p class="image-name">${image.name}</p>
+                    </div>
+                  `;
+                  
+                  const img = galleryItem.querySelector('img');
+                  img.onload = function() {
+                    this.style.opacity = '1';
+                  };
+                  
+                  galleryItem.addEventListener('click', function() {
+                    window.open(image.url, '_blank');
+                  });
+                  
+                  galleryGrid.appendChild(galleryItem);
+                });
+                
+                // Update or remove button
+                if (nextData.pagination && nextData.pagination.has_next) {
+                  loadMoreBtn.textContent = `Load More`;
+                } else {
+                  loadMoreBtn.remove();
+                }
+              })
+              .catch(error => {
+                console.error('Error loading more images:', error);
+              });
+          });
+          
+          galleryGrid.parentNode.appendChild(loadMoreBtn);
+        }
+        
+        console.log(`Loaded ${data.images.length} images into gallery`);
+      })
+      .catch(error => {
+        console.error('Error loading gallery:', error);
+        loadingSpinner.style.display = 'none';
+        galleryError.style.display = 'block';
+      });
   }
-  Dropbox.embed(options, element);
+  
+  // Initialize gallery when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, checking for gallery-grid...');
+    const galleryGrid = document.getElementById('gallery-grid');
+    console.log('Gallery grid element:', galleryGrid);
+    // Only load gallery if we're on the gallery page
+    if (galleryGrid) {
+      console.log('Loading custom gallery...');
+      loadCustomGallery();
+    } else {
+      console.log('Gallery grid not found, not on gallery page');
+    }
+  });
 
 
   //Password requirements

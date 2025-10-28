@@ -9,17 +9,17 @@
     {% endfor %}
 </div>
 
-<a 
-  href="https://www.dropbox.com/scl/fo/w67ugqfuvjgrjn5e7wtl5/AAiHMRNQrko0IovsAB9MndM?rlkey=gfnnr93l09cuzw8uia95ip3ee&st=ksyfxwj6&dl=0" 
-  class="dropbox-embed"
-  data-height="400px"
-  data-width="100%"
-></a>
+<!-- Custom Dropbox Gallery -->
+<div class="custom-gallery-section">
+  <h3>Hair Gallery</h3>
+  <div id="loading-spinner" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Loading gallery...</p>
+  </div>
+  <div id="gallery-grid" class="gallery-grid"></div>
+  <div id="gallery-error" class="gallery-error" style="display: none;">
+    <p>Failed to load gallery images. Please try again later.</p>
+  </div>
+</div>
 
-<a 
-  href="https://www.dropbox.com/scl/fo/no3o8qvii4ohm5ws8ogo1/AI8F0a_k0Ut1SeJQyTGfvu8?rlkey=63cxp2eujd6i7lpnhd41dmsbz&st=n3nmwt8e&dl=0" 
-  class="dropbox-embed"
-  data-height="400px"
-  data-width="100%"
-></a>
 {% endblock %}

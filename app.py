@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, get_flashed_messages  
+from flask import Flask, render_template, request, redirect, url_for, flash, session, get_flashed_messages, jsonify  
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
@@ -24,6 +24,7 @@ import secrets
 from math import ceil
 from flask_bootstrap import Bootstrap5
 from werkzeug.security import check_password_hash
+import dropbox
 
 
 
@@ -64,17 +65,19 @@ for key, value in os.environ.items():
         print(f"{key}={value}")
 print("=== END ENVIRONMENT VARIABLES ===")
 
-# TEMPORARY FIX: Use hardcoded values for Railway database
-# You'll need to replace these with your actual Railway database credentials
-if not all([db_user, db_password, db_name]):
-    print("WARNING: Using hardcoded database credentials - this is temporary!")
-    print("You need to add your Railway database credentials to fix this permanently.")
-    # Replace these with your actual Railway database credentials from your Railway dashboard
-    db_user = "postgres"  # Replace with your actual username
-    db_password = "ouLthFmvLijtkaFJdlWKLLvQXFfrHdye"  # Replace with your actual password  
-    db_host = "postgres.railway.internal"  # Replace with your actual host
-    db_port = "5432"  # Replace with your actual port
-    db_name = "railway"  # Replace with your actual database name
+# Auto-detect environment: local development vs production
+if db_host == "postgres.railway.internal" or not all([db_user, db_password, db_name]):
+    print("Using local PostgreSQL database for development...")
+    # Local PostgreSQL configuration
+    db_user = "glenntm"  # Your local PostgreSQL username
+    db_password = "howdydeeodoo43"  # Replace with your actual local password
+    db_host = "localhost"  # Local PostgreSQL host
+    db_port = "5432"  # Local PostgreSQL port
+    db_name = "cv_hair_emporium"  # Your local database name
+    print(f"Connecting to: postgresql://{db_user}:***@{db_host}:{db_port}/{db_name}")
+else:
+    print("Using Railway PostgreSQL database for production...")
+    print(f"Connecting to: postgresql://{db_user}:***@{db_host}:{db_port}/{db_name}")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -271,6 +274,130 @@ def home():
 @app.route('/gallery')
 def gallery():
     return render_template('gallery.html')
+
+# Cache for temporary links
+_temp_link_cache = {}
+
+@app.route('/api/gallery-images')
+@app.route('/api/gallery-images/<int:page>')
+@app.route('/api/gallery-images/<int:page>/<int:per_page>')
+def get_gallery_images(page=1, per_page=20):
+    """Fetch images from Dropbox folder and return as JSON"""
+    try:
+        # Initialize Dropbox client with access token
+        # Try environment variable first (for production), then fall back to secret.py (for local dev)
+        access_token = os.getenv('DROPBOX_ACCESS_TOKEN')
+        
+        if not access_token:
+            try:
+                from secret import dropbox_access_token
+                access_token = dropbox_access_token
+            except ImportError:
+                return jsonify({'error': 'Dropbox access token not configured. Set DROPBOX_ACCESS_TOKEN environment variable or add to secret.py'}), 500
+        
+        if not access_token or access_token == 'your_dropbox_access_token_here':
+            return jsonify({'error': 'Please configure your Dropbox access token'}), 500
+        
+        # Initialize Dropbox client with verbose output
+        print(f"Connecting to Dropbox with token starting with: {access_token[:10]}...")
+        dbx = dropbox.Dropbox(access_token)
+        
+        # Verify token is valid
+        account = dbx.users_get_current_account()
+        print(f"✅ Connected to Dropbox as: {account.name.display_name}")
+        print(f"Account email: {account.email}")
+        
+        # List files in your Dropbox folder
+        # Your folder: Mobile Uploads
+        folder_path = '/Mobile Uploads'
+        
+        print(f"📁 Attempting to list folder: {folder_path}")
+        try:
+            result = dbx.files_list_folder(folder_path)
+            print(f"✅ Successfully listed {len(result.entries)} items in folder")
+        except dropbox.exceptions.ApiError as e:
+            print(f"❌ Error listing folder: {str(e)}")
+            raise
+        
+        # First, collect all image entries to determine total count
+        image_entries = []
+        for entry in result.entries:
+            if isinstance(entry, dropbox.files.FileMetadata):
+                if entry.name.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp')):
+                    image_entries.append(entry)
+        
+        # Calculate pagination boundaries
+        total_images = len(image_entries)
+        start_idx = (page - 1) * per_page
+        end_idx = min(start_idx + per_page, total_images)
+        
+        # Only process images for current page
+        all_images = []
+        for entry in image_entries[start_idx:end_idx]:
+            # Get temporary direct link (this works reliably)
+            cache_key = entry.path_display
+            
+            if cache_key in _temp_link_cache:
+                image_url = _temp_link_cache[cache_key]
+            else:
+                try:
+                    # Get temporary direct link
+                    temp_link_result = dbx.files_get_temporary_link(entry.path_display)
+                    image_url = temp_link_result.link
+                    # Cache it (temporary links expire after 4 hours)
+                    _temp_link_cache[cache_key] = image_url
+                except Exception as e:
+                    print(f"Failed to get temporary link for {entry.name}: {e}")
+                    continue
+            
+            all_images.append({
+                'name': entry.name,
+                'url': image_url,
+                'size': entry.size,
+                'modified': entry.server_modified.isoformat() if entry.server_modified else None
+            })
+        
+        # Calculate pagination info
+        total_pages = (total_images + per_page - 1) // per_page
+        
+        response = jsonify({
+            'images': all_images,
+            'pagination': {
+                'page': page,
+                'per_page': per_page,
+                'total': total_images,
+                'total_pages': total_pages,
+                'has_next': page < total_pages,
+                'has_prev': page > 1
+            }
+        })
+        
+        # Add caching headers for better performance
+        response.cache_control.max_age = 300  # Cache API response for 5 minutes
+        
+        return response
+        
+    except dropbox.exceptions.AuthError as e:
+        error_msg = "Dropbox authentication failed. Please check your access token."
+        print(f"Dropbox Auth Error: {str(e)}")
+        return jsonify({'error': error_msg}), 500
+    except dropbox.exceptions.BadInputError as e:
+        if 'files.metadata.read' in str(e):
+            error_msg = "Dropbox app needs 'files.metadata.read' permission. Go to https://www.dropbox.com/developers/apps, select your app, Permissions tab, and enable 'files.metadata.read' scope, then regenerate your access token."
+        else:
+            error_msg = "Dropbox API returned invalid data. Please check folder path and permissions."
+        print(f"Dropbox BadInput Error: {str(e)}")
+        return jsonify({'error': error_msg}), 500
+    except dropbox.exceptions.ApiError as e:
+        error_msg = f"Dropbox API error: {str(e)}"
+        print(f"Dropbox API Error: {str(e)}")
+        return jsonify({'error': error_msg}), 500
+    except Exception as e:
+        error_msg = str(e)
+        print(f"Error fetching Dropbox images: {error_msg}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': f'Failed to fetch images: {error_msg}'}), 500
 
 @app.route('/reviews', methods=['GET', 'POST'])
 def reviews_page():
