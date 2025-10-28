@@ -54,10 +54,26 @@ mail = Mail(app)
 # Railway provides DATABASE_URL as a complete connection string
 database_url = os.getenv("DATABASE_URL")
 
+# Debug: Check if we're in Railway production (based on Railway env vars)
+railway_env = os.getenv("RAILWAY_ENVIRONMENT_ID") or os.getenv("RAILWAY_SERVICE_NAME")
+
 if database_url:
-    # Parse the DATABASE_URL for Railway
-    # Format: postgresql://user:password@host:port/dbname
+    # Use Railway DATABASE_URL
     print(f"Found DATABASE_URL, connecting to Railway PostgreSQL...")
+elif railway_env:
+    # We're on Railway but DATABASE_URL not set - try individual vars
+    print("Railway detected but DATABASE_URL not found, trying individual vars...")
+    db_user = os.getenv("PGUSER")
+    db_password = os.getenv("PGPASSWORD")
+    db_host = os.getenv("PGHOST")
+    db_port = os.getenv("PGPORT") or "5432"
+    db_name = os.getenv("PGDATABASE")
+    
+    if all([db_user, db_password, db_host, db_name]):
+        database_url = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
+        print(f"Using Railway PostgreSQL with individual vars...")
+    else:
+        print("ERROR: Railway environment detected but database credentials missing!")
 else:
     # Get database connection details with fallbacks (for local dev)
     db_user = os.getenv("PGUSER") or os.getenv("DATABASE_USERNAME")
@@ -69,8 +85,8 @@ else:
 # Debug: Print all environment variables
 print("=== ALL ENVIRONMENT VARIABLES ===")
 for key, value in os.environ.items():
-    if 'PG' in key or 'DATABASE' in key:
-        print(f"{key}={value}")
+    if 'PG' in key or 'DATABASE' in key or 'RAILWAY' in key:
+        print(f"{key}={value[:50] if value else 'None'}...")  # Show first 50 chars for debugging
 print("=== END ENVIRONMENT VARIABLES ===")
 
 # Auto-detect environment: local development vs production
@@ -79,6 +95,7 @@ if database_url:
     print("Using Railway PostgreSQL database for production...")
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 else:
+    # Fallback to local PostgreSQL for development
     print("Using local PostgreSQL database for development...")
     # Local PostgreSQL configuration (only for local development)
     db_user = "glenntm"  # Your local PostgreSQL username
