@@ -51,12 +51,20 @@ mail = Mail(app)
 
 
 #database setup
-# Get database connection details with fallbacks
-db_user = os.getenv("PGUSER") or os.getenv("DATABASE_USERNAME")
-db_password = os.getenv("PGPASSWORD") or os.getenv("DATABASE_PASSWORD") 
-db_host = os.getenv("PGHOST") or os.getenv("DATABASE_HOST") or "localhost"
-db_port = os.getenv("PGPORT") or os.getenv("DATABASE_PORT") or "5432"
-db_name = os.getenv("PGDATABASE") or os.getenv("POSTGRES_DB") or os.getenv("DATABASE_NAME")
+# Railway provides DATABASE_URL as a complete connection string
+database_url = os.getenv("DATABASE_URL")
+
+if database_url:
+    # Parse the DATABASE_URL for Railway
+    # Format: postgresql://user:password@host:port/dbname
+    print(f"Found DATABASE_URL, connecting to Railway PostgreSQL...")
+else:
+    # Get database connection details with fallbacks (for local dev)
+    db_user = os.getenv("PGUSER") or os.getenv("DATABASE_USERNAME")
+    db_password = os.getenv("PGPASSWORD") or os.getenv("DATABASE_PASSWORD") 
+    db_host = os.getenv("PGHOST") or os.getenv("DATABASE_HOST") or "localhost"
+    db_port = os.getenv("PGPORT") or os.getenv("DATABASE_PORT") or "5432"
+    db_name = os.getenv("PGDATABASE") or os.getenv("POSTGRES_DB") or os.getenv("DATABASE_NAME")
 
 # Debug: Print all environment variables
 print("=== ALL ENVIRONMENT VARIABLES ===")
@@ -66,22 +74,21 @@ for key, value in os.environ.items():
 print("=== END ENVIRONMENT VARIABLES ===")
 
 # Auto-detect environment: local development vs production
-if db_host == "postgres.railway.internal" or not all([db_user, db_password, db_name]):
+if database_url:
+    # Use Railway DATABASE_URL
+    print("Using Railway PostgreSQL database for production...")
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
     print("Using local PostgreSQL database for development...")
-    # Local PostgreSQL configuration
+    # Local PostgreSQL configuration (only for local development)
     db_user = "glenntm"  # Your local PostgreSQL username
     db_password = "howdydeeodoo43"  # Replace with your actual local password
     db_host = "localhost"  # Local PostgreSQL host
     db_port = "5432"  # Local PostgreSQL port
     db_name = "cv_hair_emporium"  # Your local database name
     print(f"Connecting to: postgresql://{db_user}:***@{db_host}:{db_port}/{db_name}")
-else:
-    print("Using Railway PostgreSQL database for production...")
-    print(f"Connecting to: postgresql://{db_user}:***@{db_host}:{db_port}/{db_name}")
-
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = f'{os.getenv("DATABASE_SECRET")}'
 
 connect_db(app)
 
