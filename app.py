@@ -311,25 +311,47 @@ def get_gallery_images(page=1, per_page=20):
         # Initialize Dropbox client with access token
         # Try environment variable first (for production), then fall back to secret.py (for local dev)
         access_token = os.getenv('DROPBOX_ACCESS_TOKEN')
+        token_source = "environment variable"
         
         if not access_token:
             try:
                 from secret import dropbox_access_token
                 access_token = dropbox_access_token
+                token_source = "secret.py file"
             except ImportError:
-                return jsonify({'error': 'Dropbox access token not configured. Set DROPBOX_ACCESS_TOKEN environment variable or add to secret.py'}), 500
+                error_msg = 'Dropbox access token not configured. Set DROPBOX_ACCESS_TOKEN environment variable or add to secret.py'
+                print(f"❌ {error_msg}")
+                return jsonify({'error': error_msg}), 500
         
-        if not access_token or access_token == 'your_dropbox_access_token_here':
-            return jsonify({'error': 'Please configure your Dropbox access token'}), 500
+        if not access_token or access_token == 'your_dropbox_access_token_here' or len(access_token.strip()) == 0:
+            error_msg = 'Please configure your Dropbox access token. Token is missing or empty.'
+            print(f"❌ {error_msg}")
+            return jsonify({'error': error_msg}), 500
+        
+        # Validate token format (Dropbox tokens typically start with specific patterns)
+        if len(access_token) < 20:
+            error_msg = 'Dropbox access token appears to be invalid (too short).'
+            print(f"❌ {error_msg}")
+            return jsonify({'error': error_msg}), 500
         
         # Initialize Dropbox client with verbose output
-        print(f"Connecting to Dropbox with token starting with: {access_token[:10]}...")
-        dbx = dropbox.Dropbox(access_token)
+        print(f"📡 Connecting to Dropbox...")
+        print(f"   Token source: {token_source}")
+        print(f"   Token length: {len(access_token)} characters")
+        print(f"   Token preview: {access_token[:10]}...{access_token[-5:] if len(access_token) > 15 else ''}")
         
-        # Verify token is valid
-        account = dbx.users_get_current_account()
-        print(f"✅ Connected to Dropbox as: {account.name.display_name}")
-        print(f"Account email: {account.email}")
+        try:
+            dbx = dropbox.Dropbox(access_token)
+            
+            # Verify token is valid
+            print(f"   Verifying token...")
+            account = dbx.users_get_current_account()
+            print(f"✅ Connected to Dropbox as: {account.name.display_name}")
+            print(f"   Account email: {account.email}")
+        except dropbox.exceptions.AuthError as auth_err:
+            error_msg = f"Dropbox authentication failed. Token may be invalid or expired. Error: {str(auth_err)}"
+            print(f"❌ {error_msg}")
+            return jsonify({'error': 'Dropbox authentication failed. Please check your access token.'}), 500
         
         # List files in your Dropbox folder
         # Your folder: Mobile Uploads
@@ -340,8 +362,16 @@ def get_gallery_images(page=1, per_page=20):
             result = dbx.files_list_folder(folder_path)
             print(f"✅ Successfully listed {len(result.entries)} items in folder")
         except dropbox.exceptions.ApiError as e:
-            print(f"❌ Error listing folder: {str(e)}")
-            raise
+            error_detail = str(e)
+            print(f"❌ Error listing folder: {error_detail}")
+            # Check if it's a permission or path error
+            if 'not_found' in error_detail.lower() or 'path' in error_detail.lower():
+                error_msg = f"Folder '{folder_path}' not found in Dropbox. Please verify the folder exists and the path is correct."
+            elif 'insufficient_scope' in error_detail.lower() or 'permission' in error_detail.lower():
+                error_msg = "Insufficient permissions. The Dropbox app needs 'files.metadata.read' and 'files.content.read' permissions. Regenerate your access token after enabling these permissions."
+            else:
+                error_msg = f"Error accessing Dropbox folder: {error_detail}"
+            return jsonify({'error': error_msg}), 500
         
         # First, collect all image entries to determine total count
         image_entries = []
@@ -354,6 +384,8 @@ def get_gallery_images(page=1, per_page=20):
         total_images = len(image_entries)
         start_idx = (page - 1) * per_page
         end_idx = min(start_idx + per_page, total_images)
+        
+        print(f"📊 Found {total_images} images. Showing page {page} (images {start_idx+1} to {end_idx})")
         
         # Only process images for current page
         all_images = []
@@ -371,7 +403,7 @@ def get_gallery_images(page=1, per_page=20):
                     # Cache it (temporary links expire after 4 hours)
                     _temp_link_cache[cache_key] = image_url
                 except Exception as e:
-                    print(f"Failed to get temporary link for {entry.name}: {e}")
+                    print(f"⚠️  Failed to get temporary link for {entry.name}: {e}")
                     continue
             
             all_images.append({
@@ -383,6 +415,8 @@ def get_gallery_images(page=1, per_page=20):
         
         # Calculate pagination info
         total_pages = (total_images + per_page - 1) // per_page
+        
+        print(f"✅ Returning {len(all_images)} images for page {page} of {total_pages}")
         
         response = jsonify({
             'images': all_images,
@@ -401,24 +435,22 @@ def get_gallery_images(page=1, per_page=20):
         
         return response
         
-    except dropbox.exceptions.AuthError as e:
-        error_msg = "Dropbox authentication failed. Please check your access token."
-        print(f"Dropbox Auth Error: {str(e)}")
-        return jsonify({'error': error_msg}), 500
     except dropbox.exceptions.BadInputError as e:
-        if 'files.metadata.read' in str(e):
+        error_detail = str(e)
+        if 'files.metadata.read' in error_detail:
             error_msg = "Dropbox app needs 'files.metadata.read' permission. Go to https://www.dropbox.com/developers/apps, select your app, Permissions tab, and enable 'files.metadata.read' scope, then regenerate your access token."
         else:
-            error_msg = "Dropbox API returned invalid data. Please check folder path and permissions."
-        print(f"Dropbox BadInput Error: {str(e)}")
+            error_msg = f"Dropbox API returned invalid data: {error_detail}"
+        print(f"❌ Dropbox BadInput Error: {error_detail}")
         return jsonify({'error': error_msg}), 500
     except dropbox.exceptions.ApiError as e:
-        error_msg = f"Dropbox API error: {str(e)}"
-        print(f"Dropbox API Error: {str(e)}")
+        error_detail = str(e)
+        error_msg = f"Dropbox API error: {error_detail}"
+        print(f"❌ Dropbox API Error: {error_detail}")
         return jsonify({'error': error_msg}), 500
     except Exception as e:
         error_msg = str(e)
-        print(f"Error fetching Dropbox images: {error_msg}")
+        print(f"❌ Unexpected error fetching Dropbox images: {error_msg}")
         import traceback
         traceback.print_exc()
         return jsonify({'error': f'Failed to fetch images: {error_msg}'}), 500
