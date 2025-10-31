@@ -85,8 +85,12 @@ else:
 # Debug: Print all environment variables
 print("=== ALL ENVIRONMENT VARIABLES ===")
 for key, value in os.environ.items():
-    if 'PG' in key or 'DATABASE' in key or 'RAILWAY' in key:
-        print(f"{key}={value[:50] if value else 'None'}...")  # Show first 50 chars for debugging
+    if 'PG' in key or 'DATABASE' in key or 'RAILWAY' in key or 'DROPBOX' in key:
+        if 'DROPBOX' in key:
+            # Show DROPBOX token info but mask the actual token
+            print(f"{key}=[LENGTH: {len(value)} chars] {value[:20] if value else 'None'}...{value[-10:] if value and len(value) > 30 else ''}")
+        else:
+            print(f"{key}={value[:50] if value else 'None'}...")  # Show first 50 chars for debugging
 print("=== END ENVIRONMENT VARIABLES ===")
 
 # Auto-detect environment: local development vs production
@@ -338,7 +342,10 @@ def get_gallery_images(page=1, per_page=20):
         print(f"📡 Connecting to Dropbox...")
         print(f"   Token source: {token_source}")
         print(f"   Token length: {len(access_token)} characters")
-        print(f"   Token preview: {access_token[:10]}...{access_token[-5:] if len(access_token) > 15 else ''}")
+        print(f"   Token preview: {access_token[:20]}...{access_token[-10:] if len(access_token) > 30 else ''}")
+        # Additional debug: check if token matches expected length
+        if len(access_token) != 1309:
+            print(f"   ⚠️  WARNING: Token length is {len(access_token)}, expected 1309 characters!")
         
         try:
             dbx = dropbox.Dropbox(access_token)
