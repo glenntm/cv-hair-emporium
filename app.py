@@ -303,7 +303,8 @@ def home():
 def gallery():
     return render_template('gallery.html')
 
-# Cache for temporary links
+# Cache for temporary links with expiration tracking
+# Format: {path: {'url': link, 'expires_at': datetime}}
 _temp_link_cache = {}
 
 @app.route('/api/gallery-images')
@@ -396,19 +397,38 @@ def get_gallery_images(page=1, per_page=20):
         
         # Only process images for current page
         all_images = []
+        current_time = datetime.now(timezone.utc)
+        
         for entry in image_entries[start_idx:end_idx]:
             # Get temporary direct link (this works reliably)
             cache_key = entry.path_display
+            image_url = None
             
+            # Check if we have a cached link that's still valid
             if cache_key in _temp_link_cache:
-                image_url = _temp_link_cache[cache_key]
-            else:
+                cached_data = _temp_link_cache[cache_key]
+                # Check if link is still valid (refresh if less than 30 minutes until expiration)
+                if cached_data['expires_at'] > current_time + timedelta(minutes=30):
+                    image_url = cached_data['url']
+                    print(f"   ✓ Using cached link for {entry.name} (expires in {(cached_data['expires_at'] - current_time).total_seconds() / 3600:.1f}h)")
+                else:
+                    # Link is about to expire or expired, remove from cache
+                    print(f"   ⚠️  Cached link for {entry.name} expired or expiring soon, refreshing...")
+                    del _temp_link_cache[cache_key]
+            
+            # If no valid cached link, get a new one
+            if not image_url:
                 try:
                     # Get temporary direct link
                     temp_link_result = dbx.files_get_temporary_link(entry.path_display)
                     image_url = temp_link_result.link
-                    # Cache it (temporary links expire after 4 hours)
-                    _temp_link_cache[cache_key] = image_url
+                    # Cache it with expiration time (Dropbox links expire after 4 hours)
+                    expires_at = current_time + timedelta(hours=3, minutes=50)  # Refresh 10 min before 4h expiration
+                    _temp_link_cache[cache_key] = {
+                        'url': image_url,
+                        'expires_at': expires_at
+                    }
+                    print(f"   ✓ Generated new link for {entry.name} (valid until {expires_at.strftime('%H:%M:%S')} UTC)")
                 except Exception as e:
                     print(f"⚠️  Failed to get temporary link for {entry.name}: {e}")
                     continue
