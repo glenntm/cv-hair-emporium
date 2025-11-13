@@ -303,6 +303,264 @@ def home():
 def gallery():
     return render_template('gallery.html')
 
+# Dropbox OAuth endpoints for getting refresh token
+@app.route('/dropbox-auth')
+def dropbox_auth():
+    """Initiate Dropbox OAuth flow to get refresh token"""
+    app_key = os.getenv('DROPBOX_APP_KEY')
+    
+    if not app_key:
+        # Try to get from secret.py for local dev
+        try:
+            from secret import dropbox_app_key
+            app_key = dropbox_app_key
+        except ImportError:
+            return '''
+            <h1>Dropbox OAuth Setup</h1>
+            <p>❌ DROPBOX_APP_KEY not found. Please set it in Railway or secret.py</p>
+            <p>Get your App Key from: <a href="https://www.dropbox.com/developers/apps">https://www.dropbox.com/developers/apps</a></p>
+            <p>Go to your app → Settings → App key & secret</p>
+            ''', 400
+    
+    # Generate state for security
+    state = secrets.token_urlsafe(32)
+    session['dropbox_oauth_state'] = state
+    
+    # Build OAuth URL with offline access to get refresh token
+    redirect_uri = url_for('dropbox_callback', _external=True)
+    oauth_url = (
+        f"https://www.dropbox.com/oauth2/authorize?"
+        f"client_id={app_key}&"
+        f"response_type=code&"
+        f"redirect_uri={redirect_uri}&"
+        f"token_access_type=offline&"  # This requests a refresh token
+        f"state={state}"
+    )
+    
+    return redirect(oauth_url)
+
+@app.route('/dropbox-callback')
+def dropbox_callback():
+    """Handle Dropbox OAuth callback and exchange code for tokens"""
+    # Verify state
+    stored_state = session.get('dropbox_oauth_state')
+    received_state = request.args.get('state')
+    
+    if not stored_state or stored_state != received_state:
+        return '''
+        <h1>❌ OAuth Error</h1>
+        <p>Invalid state parameter. Please try again.</p>
+        <a href="/dropbox-auth">Try Again</a>
+        ''', 400
+    
+    # Check for errors
+    error = request.args.get('error')
+    if error:
+        error_description = request.args.get('error_description', 'Unknown error')
+        return f'''
+        <h1>❌ OAuth Error</h1>
+        <p>Error: {error}</p>
+        <p>Description: {error_description}</p>
+        <a href="/dropbox-auth">Try Again</a>
+        ''', 400
+    
+    # Get authorization code
+    code = request.args.get('code')
+    if not code:
+        return '''
+        <h1>❌ OAuth Error</h1>
+        <p>No authorization code received.</p>
+        <a href="/dropbox-auth">Try Again</a>
+        ''', 400
+    
+    # Get app credentials
+    app_key = os.getenv('DROPBOX_APP_KEY')
+    app_secret = os.getenv('DROPBOX_APP_SECRET')
+    
+    if not app_key or not app_secret:
+        # Try to get from secret.py for local dev
+        try:
+            from secret import dropbox_app_key, dropbox_app_secret
+            app_key = dropbox_app_key
+            app_secret = dropbox_app_secret
+        except ImportError:
+            return '''
+            <h1>❌ Configuration Error</h1>
+            <p>DROPBOX_APP_KEY and DROPBOX_APP_SECRET not found.</p>
+            <p>Please set them in Railway or secret.py</p>
+            ''', 500
+    
+    # Exchange code for tokens
+    redirect_uri = url_for('dropbox_callback', _external=True)
+    
+    try:
+        token_response = requests.post(
+            'https://api.dropbox.com/oauth2/token',
+            data={
+                'code': code,
+                'grant_type': 'authorization_code',
+                'client_id': app_key,
+                'client_secret': app_secret,
+                'redirect_uri': redirect_uri
+            }
+        )
+        
+        if token_response.status_code != 200:
+            return f'''
+            <h1>❌ Token Exchange Failed</h1>
+            <p>Status: {token_response.status_code}</p>
+            <p>Response: {token_response.text}</p>
+            <a href="/dropbox-auth">Try Again</a>
+            ''', 500
+        
+        token_data = token_response.json()
+        access_token = token_data.get('access_token')
+        refresh_token = token_data.get('refresh_token')
+        expires_in = token_data.get('expires_in', 'Unknown')
+        
+        if not refresh_token:
+            return '''
+            <h1>⚠️ Warning</h1>
+            <p>No refresh token received. Make sure you included <code>token_access_type=offline</code> in the OAuth URL.</p>
+            <p>Access Token: {access_token[:50]}...</p>
+            <a href="/dropbox-auth">Try Again</a>
+            ''', 400
+        
+        # Display tokens for user to copy
+        return f'''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Dropbox OAuth Success</title>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    max-width: 800px;
+                    margin: 50px auto;
+                    padding: 20px;
+                    background: #f5f5f5;
+                }}
+                .container {{
+                    background: white;
+                    padding: 30px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }}
+                h1 {{
+                    color: #0061ff;
+                }}
+                .success {{
+                    color: #00a86b;
+                    font-weight: bold;
+                }}
+                .token-box {{
+                    background: #f8f9fa;
+                    border: 1px solid #dee2e6;
+                    border-radius: 4px;
+                    padding: 15px;
+                    margin: 15px 0;
+                    word-break: break-all;
+                    font-family: monospace;
+                    font-size: 12px;
+                }}
+                .instructions {{
+                    background: #fff3cd;
+                    border: 1px solid #ffc107;
+                    border-radius: 4px;
+                    padding: 15px;
+                    margin: 20px 0;
+                }}
+                .warning {{
+                    background: #f8d7da;
+                    border: 1px solid #dc3545;
+                    border-radius: 4px;
+                    padding: 15px;
+                    margin: 20px 0;
+                }}
+                button {{
+                    background: #0061ff;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    margin: 5px;
+                }}
+                button:hover {{
+                    background: #0052d9;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>✅ Dropbox OAuth Successful!</h1>
+                <p class="success">You have successfully authorized the app and received tokens.</p>
+                
+                <div class="instructions">
+                    <h3>📋 Next Steps:</h3>
+                    <ol>
+                        <li>Copy the tokens below</li>
+                        <li>Add them to Railway environment variables:</li>
+                        <ul>
+                            <li><code>DROPBOX_ACCESS_TOKEN</code> = Access Token (below)</li>
+                            <li><code>DROPBOX_REFRESH_TOKEN</code> = Refresh Token (below)</li>
+                            <li><code>DROPBOX_APP_KEY</code> = Your App Key</li>
+                            <li><code>DROPBOX_APP_SECRET</code> = Your App Secret</li>
+                        </ul>
+                        <li>Also update <code>secret.py</code> with the new access token for local development</li>
+                        <li>Redeploy your Railway app</li>
+                    </ol>
+                </div>
+                
+                <h3>Access Token (expires in {expires_in} seconds):</h3>
+                <div class="token-box" id="access-token">{access_token}</div>
+                <button onclick="copyToClipboard('access-token')">Copy Access Token</button>
+                
+                <h3>Refresh Token (long-lived, keep secure!):</h3>
+                <div class="token-box" id="refresh-token">{refresh_token}</div>
+                <button onclick="copyToClipboard('refresh-token')">Copy Refresh Token</button>
+                
+                <div class="warning">
+                    <strong>⚠️ Important:</strong>
+                    <ul>
+                        <li>Keep the refresh token secure - it allows generating new access tokens</li>
+                        <li>Don't commit these tokens to git</li>
+                        <li>The access token will expire, but the refresh token can generate new ones automatically</li>
+                    </ul>
+                </div>
+                
+                <p><a href="/gallery">Go to Gallery</a> | <a href="/dropbox-auth">Re-authorize</a></p>
+            </div>
+            
+            <script>
+                function copyToClipboard(elementId) {{
+                    const element = document.getElementById(elementId);
+                    const text = element.textContent;
+                    navigator.clipboard.writeText(text).then(function() {{
+                        alert('Copied to clipboard!');
+                    }}, function(err) {{
+                        // Fallback for older browsers
+                        const textArea = document.createElement('textarea');
+                        textArea.value = text;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        alert('Copied to clipboard!');
+                    }});
+                }}
+            </script>
+        </body>
+        </html>
+        '''
+        
+    except Exception as e:
+        return f'''
+        <h1>❌ Error</h1>
+        <p>Failed to exchange code for tokens: {str(e)}</p>
+        <a href="/dropbox-auth">Try Again</a>
+        ''', 500
+
 # Cache for temporary links with expiration tracking
 # Format: {path: {'url': link, 'expires_at': datetime}}
 _temp_link_cache = {}
@@ -348,8 +606,13 @@ def get_gallery_images(page=1, per_page=20):
         if len(access_token) != 1309:
             print(f"   ⚠️  WARNING: Token length is {len(access_token)}, expected 1309 characters!")
         
+        # Check if we have refresh token credentials for automatic refresh
+        refresh_token = os.getenv('DROPBOX_REFRESH_TOKEN')
+        app_key = os.getenv('DROPBOX_APP_KEY')
+        app_secret = os.getenv('DROPBOX_APP_SECRET')
+        
         try:
-            dbx = dropbox.Dropbox(access_token)
+            dbx = dropbox.Dropbox(access_token, app_key=app_key, app_secret=app_secret)
             
             # Verify token is valid
             print(f"   Verifying token...")
@@ -357,9 +620,49 @@ def get_gallery_images(page=1, per_page=20):
             print(f"✅ Connected to Dropbox as: {account.name.display_name}")
             print(f"   Account email: {account.email}")
         except dropbox.exceptions.AuthError as auth_err:
-            error_msg = f"Dropbox authentication failed. Token may be invalid or expired. Error: {str(auth_err)}"
-            print(f"❌ {error_msg}")
-            return jsonify({'error': 'Dropbox authentication failed. Please check your access token.'}), 500
+            error_detail = str(auth_err)
+            print(f"❌ Authentication failed: {error_detail}")
+            
+            # Try to refresh token if we have refresh token credentials
+            if refresh_token and app_key and app_secret and 'expired_access_token' in error_detail:
+                print(f"   🔄 Attempting to refresh access token...")
+                try:
+                    # Refresh the access token
+                    refresh_response = requests.post(
+                        'https://api.dropbox.com/oauth2/token',
+                        data={
+                            'grant_type': 'refresh_token',
+                            'refresh_token': refresh_token,
+                            'client_id': app_key,
+                            'client_secret': app_secret
+                        }
+                    )
+                    
+                    if refresh_response.status_code == 200:
+                        new_token_data = refresh_response.json()
+                        new_access_token = new_token_data.get('access_token')
+                        print(f"   ✅ Successfully refreshed access token!")
+                        
+                        # Update the token and retry
+                        access_token = new_access_token
+                        dbx = dropbox.Dropbox(new_access_token, app_key=app_key, app_secret=app_secret)
+                        account = dbx.users_get_current_account()
+                        print(f"✅ Connected to Dropbox as: {account.name.display_name}")
+                        print(f"   ⚠️  NOTE: New token generated. Update DROPBOX_ACCESS_TOKEN in Railway with new token.")
+                        print(f"   New token preview: {new_access_token[:20]}...{new_access_token[-10:]}")
+                    else:
+                        print(f"   ❌ Failed to refresh token: {refresh_response.text}")
+                        return jsonify({'error': 'Dropbox token expired and refresh failed. Please generate a new access token.'}), 500
+                except Exception as refresh_err:
+                    print(f"   ❌ Error refreshing token: {refresh_err}")
+                    return jsonify({'error': 'Dropbox token expired. Please generate a new access token from https://www.dropbox.com/developers/apps'}), 500
+            else:
+                # No refresh token available, return error
+                if 'expired_access_token' in error_detail:
+                    error_msg = 'Dropbox access token has expired. Short-lived tokens (sl.u.*) expire after a few hours. To fix this permanently, you need to set up OAuth with refresh tokens. For now, generate a new token at https://www.dropbox.com/developers/apps'
+                else:
+                    error_msg = 'Dropbox authentication failed. Please check your access token.'
+                return jsonify({'error': error_msg}), 500
         
         # List files in your Dropbox folder
         # Your folder: Mobile Uploads
