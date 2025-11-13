@@ -93,13 +93,32 @@ else:
 
 # Debug: Print all environment variables
 print("=== ALL ENVIRONMENT VARIABLES ===")
+dropbox_vars_found = []
 for key, value in os.environ.items():
     if 'PG' in key or 'DATABASE' in key or 'RAILWAY' in key or 'DROPBOX' in key:
         if 'DROPBOX' in key:
+            dropbox_vars_found.append(key)
             # Show DROPBOX token info but mask the actual token
-            print(f"{key}=[LENGTH: {len(value)} chars] {value[:20] if value else 'None'}...{value[-10:] if value and len(value) > 30 else ''}")
+            if value:
+                if 'REFRESH' in key:
+                    print(f"{key}=[LENGTH: {len(value)} chars] {value[:30]}...{value[-10:]}")
+                else:
+                    print(f"{key}=[LENGTH: {len(value)} chars] {value[:20]}...{value[-10:] if len(value) > 30 else ''}")
+            else:
+                print(f"{key}=None or empty")
         else:
             print(f"{key}={value[:50] if value else 'None'}...")  # Show first 50 chars for debugging
+
+# Explicitly check for required DROPBOX variables
+print("\n=== DROPBOX VARIABLES CHECK ===")
+required_vars = ['DROPBOX_ACCESS_TOKEN', 'DROPBOX_REFRESH_TOKEN', 'DROPBOX_APP_KEY', 'DROPBOX_APP_SECRET']
+for var in required_vars:
+    value = os.getenv(var)
+    if value:
+        print(f"✅ {var}: Found ({len(value)} chars)")
+    else:
+        print(f"❌ {var}: MISSING")
+print("=== END DROPBOX VARIABLES CHECK ===")
 print("=== END ENVIRONMENT VARIABLES ===")
 
 # Auto-detect environment: local development vs production
