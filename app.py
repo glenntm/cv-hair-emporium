@@ -38,6 +38,15 @@ mail = Mail(app) # instantiate the mail class
 
 #for CSRF token
 app.config['SECRET_KEY'] = os.getenv("CRSF_SECRET")
+if not app.config['SECRET_KEY']:
+    # Fallback to secret.py for local development
+    try:
+        from secret import crsf_secret
+        app.config['SECRET_KEY'] = crsf_secret
+    except ImportError:
+        # If secret.py doesn't exist, generate a random key (not secure for production!)
+        app.config['SECRET_KEY'] = secrets.token_hex(32)
+        print("⚠️  WARNING: Using generated SECRET_KEY. Set CRSF_SECRET environment variable or add crsf_secret to secret.py")
 
 
 # configuration of mail 
@@ -610,6 +619,33 @@ def get_gallery_images(page=1, per_page=20):
         refresh_token = os.getenv('DROPBOX_REFRESH_TOKEN')
         app_key = os.getenv('DROPBOX_APP_KEY')
         app_secret = os.getenv('DROPBOX_APP_SECRET')
+        
+        # Fallback to secret.py for local dev
+        if not refresh_token:
+            try:
+                from secret import dropbox_refresh_token
+                refresh_token = dropbox_refresh_token
+            except (ImportError, AttributeError):
+                pass
+        
+        if not app_key:
+            try:
+                from secret import dropbox_app_key
+                app_key = dropbox_app_key
+            except (ImportError, AttributeError):
+                pass
+        
+        if not app_secret:
+            try:
+                from secret import dropbox_app_secret
+                app_secret = dropbox_app_secret
+            except (ImportError, AttributeError):
+                pass
+        
+        # Debug: Log what credentials we have
+        print(f"   Refresh token available: {'Yes' if refresh_token else 'No'}")
+        print(f"   App key available: {'Yes' if app_key else 'No'}")
+        print(f"   App secret available: {'Yes' if app_secret else 'No'}")
         
         try:
             dbx = dropbox.Dropbox(access_token, app_key=app_key, app_secret=app_secret)
