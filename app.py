@@ -667,7 +667,19 @@ def get_gallery_images(page=1, per_page=20):
         print(f"   App secret available: {'Yes' if app_secret else 'No'}")
         
         try:
-            dbx = dropbox.Dropbox(access_token, app_key=app_key, app_secret=app_secret)
+            # If we have refresh token credentials, pass them to enable auto-refresh
+            if refresh_token and app_key and app_secret:
+                print(f"   Using Dropbox client with refresh token support...")
+                dbx = dropbox.Dropbox(
+                    oauth2_access_token=access_token,
+                    oauth2_refresh_token=refresh_token,
+                    app_key=app_key,
+                    app_secret=app_secret
+                )
+            else:
+                # Fallback to access token only (no auto-refresh)
+                print(f"   Using Dropbox client with access token only (no refresh support)...")
+                dbx = dropbox.Dropbox(access_token)
             
             # Verify token is valid
             print(f"   Verifying token...")
@@ -696,14 +708,21 @@ def get_gallery_images(page=1, per_page=20):
                     if refresh_response.status_code == 200:
                         new_token_data = refresh_response.json()
                         new_access_token = new_token_data.get('access_token')
+                        # Refresh token might be updated, use new one if provided, otherwise keep the old one
+                        new_refresh_token = new_token_data.get('refresh_token') or refresh_token
                         print(f"   ✅ Successfully refreshed access token!")
                         
-                        # Update the token and retry
+                        # Update the token and retry with refresh token support
                         access_token = new_access_token
-                        dbx = dropbox.Dropbox(new_access_token, app_key=app_key, app_secret=app_secret)
+                        dbx = dropbox.Dropbox(
+                            oauth2_access_token=new_access_token,
+                            oauth2_refresh_token=new_refresh_token,
+                            app_key=app_key,
+                            app_secret=app_secret
+                        )
                         account = dbx.users_get_current_account()
                         print(f"✅ Connected to Dropbox as: {account.name.display_name}")
-                        print(f"   ⚠️  NOTE: New token generated. Update DROPBOX_ACCESS_TOKEN in Railway with new token.")
+                        print(f"   ⚠️  NOTE: New token generated. Consider updating DROPBOX_ACCESS_TOKEN in Railway with new token (optional - refresh will work automatically).")
                         print(f"   New token preview: {new_access_token[:20]}...{new_access_token[-10:]}")
                     else:
                         print(f"   ❌ Failed to refresh token: {refresh_response.text}")
@@ -712,11 +731,29 @@ def get_gallery_images(page=1, per_page=20):
                     print(f"   ❌ Error refreshing token: {refresh_err}")
                     return jsonify({'error': 'Dropbox token expired. Please generate a new access token from https://www.dropbox.com/developers/apps'}), 500
             else:
-                # No refresh token available, return error
+                # No refresh token available, return error with helpful message
                 if 'expired_access_token' in error_detail:
-                    error_msg = 'Dropbox access token has expired. Short-lived tokens (sl.u.*) expire after a few hours. To fix this permanently, you need to set up OAuth with refresh tokens. For now, generate a new token at https://www.dropbox.com/developers/apps'
+                    missing_vars = []
+                    if not refresh_token:
+                        missing_vars.append('DROPBOX_REFRESH_TOKEN')
+                    if not app_key:
+                        missing_vars.append('DROPBOX_APP_KEY')
+                    if not app_secret:
+                        missing_vars.append('DROPBOX_APP_SECRET')
+                    
+                    if missing_vars:
+                        error_msg = f'''Dropbox access token has expired and cannot be refreshed because the following Railway environment variables are missing: {', '.join(missing_vars)}. 
+
+Please add these variables to your Railway project:
+1. Go to your Railway project → Variables tab
+2. Add DROPBOX_REFRESH_TOKEN, DROPBOX_APP_KEY, and DROPBOX_APP_SECRET
+3. Redeploy your application
+
+You can get these values from your secret.py file or regenerate them using the /dropbox-auth endpoint.'''
+                    else:
+                        error_msg = 'Dropbox access token has expired. Please check your refresh token credentials.'
                 else:
-                    error_msg = 'Dropbox authentication failed. Please check your access token.'
+                    error_msg = f'Dropbox authentication failed: {error_detail}'
                 return jsonify({'error': error_msg}), 500
         
         # List files in your Dropbox folder
@@ -745,6 +782,17 @@ def get_gallery_images(page=1, per_page=20):
             if isinstance(entry, dropbox.files.FileMetadata):
                 if entry.name.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp')):
                     image_entries.append(entry)
+        
+        # Sort images by modification date (newest first)
+        # Images without a modification date will be sorted to the end
+        # Use a very old date (1970-01-01) for entries without server_modified
+        min_date = datetime(1970, 1, 1, tzinfo=timezone.utc)
+        image_entries.sort(
+            key=lambda x: x.server_modified if x.server_modified else min_date,
+            reverse=True
+        )
+        
+        print(f"📊 Sorted {len(image_entries)} images by modification date (newest first)")
         
         # Calculate pagination boundaries
         total_images = len(image_entries)
