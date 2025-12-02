@@ -31,6 +31,15 @@ import dropbox
 
 
 app = Flask(__name__)
+
+# Force HTTPS in production (Railway)
+# Railway uses a proxy, so we need to trust the X-Forwarded-* headers
+if os.getenv("RAILWAY_ENVIRONMENT_ID") or os.getenv("RAILWAY_SERVICE_NAME"):
+    # We're on Railway - use HTTPS
+    from werkzeug.middleware.proxy_fix import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+    app.config['PREFERRED_URL_SCHEME'] = 'https'
+
 bootstrap = Bootstrap5(app)
 json = FlaskJSON(app)
 bcrypt = Bcrypt(app)
@@ -1048,7 +1057,17 @@ def googleLogin():
     session['nonce'] = nonce
 
     # Get redirect URI (will be different for local vs production)
-    redirect_uri = url_for('googleCallback', _external=True)
+    # Force HTTPS in production (Railway)
+    if os.getenv("RAILWAY_ENVIRONMENT_ID") or os.getenv("RAILWAY_SERVICE_NAME"):
+        # On Railway, force HTTPS
+        redirect_uri = url_for('googleCallback', _external=True)
+        # Replace http:// with https:// if it's there (shouldn't be with ProxyFix, but just in case)
+        if redirect_uri.startswith('http://'):
+            redirect_uri = redirect_uri.replace('http://', 'https://', 1)
+    else:
+        # Local development - use whatever scheme is in the request
+        redirect_uri = url_for('googleCallback', _external=True)
+    
     print(f"🔐 Initiating Google OAuth flow with redirect URI: {redirect_uri}")
     
     try:
