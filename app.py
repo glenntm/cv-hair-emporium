@@ -161,13 +161,39 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 #for google sso setup
+# Get Google OAuth credentials from environment or fallback to secret.py
+google_client_id = os.getenv('GOOGLE_CLIENT_ID')
+google_client_secret = os.getenv('GOOGLE_CLIENT_SECRET')
+flask_secret = os.getenv('FLASK_SECRET')
+
+if not google_client_id or not google_client_secret:
+    # Fallback to secret.py for local development
+    try:
+        from secret import google_client_ID, google_client_secret as secret_google_secret, flask_secret as secret_flask_secret
+        if not google_client_id:
+            google_client_id = google_client_ID
+        if not google_client_secret:
+            google_client_secret = secret_google_secret
+        if not flask_secret:
+            flask_secret = secret_flask_secret
+    except ImportError:
+        print("⚠️  WARNING: Google OAuth credentials not found. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables or add them to secret.py")
+
 appConf = {
-    "OAUTH2_CLIENT_ID": f"{os.getenv('GOOGLE_CLIENT_ID')}",
-    "OAUTH2_CLIENT_SECRET": f"{os.getenv('GOOGLE_CLIENT_SECRET')}",
+    "OAUTH2_CLIENT_ID": google_client_id or "",
+    "OAUTH2_CLIENT_SECRET": google_client_secret or "",
     "OAUTH_META_URL": "https://accounts.google.com/.well-known/openid-configuration",
-    "FLASK_SECRET": f"{os.getenv('FLASK_SECRET')}",
+    "FLASK_SECRET": flask_secret or "",
     "FLASK_PORT":5000
 }
+
+# Validate OAuth credentials before registering
+if not appConf.get("OAUTH2_CLIENT_ID") or not appConf.get("OAUTH2_CLIENT_SECRET"):
+    print("❌ ERROR: Google OAuth credentials are missing!")
+    print("   Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables")
+    print("   or add them to secret.py for local development")
+else:
+    print("✅ Google OAuth credentials loaded successfully")
 
 oauth = OAuth(app)
 oauth.register("myApp",
@@ -178,6 +204,11 @@ oauth.register("myApp",
                    "scope": "openid profile email" #https://www.googleapis.com/auth/user.gender.read https://www.googleapis.com/auth/user.birthday.read
                }
                )
+
+# Make Google Client ID available to all templates
+@app.context_processor
+def inject_google_client_id():
+    return {'google_client_id': appConf.get("OAUTH2_CLIENT_ID", "")}
 
 class RegistrationForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=2, max=80)], render_kw={"placeholder": "First Name"} )
@@ -1005,19 +1036,27 @@ def login():
 # Route for google authorization
 @app.route('/google-login', methods=['GET', 'POST'])
 def googleLogin():
-    #print("Session Before Authorize Redirect:", session)
+    # Check if OAuth is properly configured
+    if not appConf.get("OAUTH2_CLIENT_ID") or not appConf.get("OAUTH2_CLIENT_SECRET"):
+        flash("Google sign-in is not properly configured. Please contact support.", "danger")
+        return redirect(url_for('login'))
     
     session.clear()
-    print("Session After Clearing:", session)
-
+    
     # Generate a unique nonce for this session and store it
     nonce = str(uuid.uuid4())
     session['nonce'] = nonce
 
-
-    #print("Session After Authorize Redirect:", session)
+    # Get redirect URI (will be different for local vs production)
     redirect_uri = url_for('googleCallback', _external=True)
-    return oauth.myApp.authorize_redirect(redirect_uri, nonce=nonce)
+    print(f"🔐 Initiating Google OAuth flow with redirect URI: {redirect_uri}")
+    
+    try:
+        return oauth.myApp.authorize_redirect(redirect_uri, nonce=nonce)
+    except Exception as e:
+        print(f"❌ Error initiating Google OAuth: {e}")
+        flash("An error occurred while connecting to Google. Please try again.", "danger")
+        return redirect(url_for('login'))
 
 
 # Route for google callback
@@ -1026,50 +1065,96 @@ def googleCallback():
     # Retrieve the nonce from the session
     nonce = session.get('nonce')
     if not nonce:
+        print("⚠️  Google OAuth callback: Nonce missing from session")
+        flash("Session expired. Please try signing in again.", "warning")
         return redirect(url_for('googleLogin'))  # Redirect to login if nonce is missing
 
-    # Exchange the authorization code for an access token
-    token = oauth.myApp.authorize_access_token()
+    try:
+        # Exchange the authorization code for an access token
+        token = oauth.myApp.authorize_access_token()
+        print("✅ Google OAuth: Access token received")
+    except Exception as e:
+        print(f"❌ Google OAuth: Error getting access token: {e}")
+        flash("Failed to authenticate with Google. Please try again.", "danger")
+        return redirect(url_for('login'))
 
     try:
         # Parse the ID token and validate it with the stored nonce
         user_info = oauth.myApp.parse_id_token(token, nonce=nonce, leeway=120)
         session['user'] = user_info
+        print(f"✅ Google OAuth: User authenticated - {user_info.get('email', 'Unknown')}")
     except ExpiredTokenError:
-        print("The token has expired")
+        print("❌ Google OAuth: Token has expired")
+        flash("Your session has expired. Please try signing in again.", "warning")
         return redirect(url_for('googleLogin'))  # Redirect if token is expired
     except JoseError as e:
-        print(f"JoseError: {e}")
+        print(f"❌ Google OAuth: Token validation error: {e}")
+        flash("Authentication failed. Please try again.", "danger")
         return redirect(url_for('googleLogin'))  # Redirect for other token issues
 
-    hashed_password = bcrypt.generate_password_hash(os.getenv('GOOGLE_PASSWORD')).decode('utf-8')
-
-    # Debugging state and token
-    print("Session State After OAuth:", session.get('state'))
-    print("OAuth Token:", token)
+    # Get Google password from environment or fallback to secret.py
+    google_password = os.getenv('GOOGLE_PASSWORD')
+    if not google_password:
+        try:
+            from secret import google_password as secret_google_password
+            google_password = secret_google_password
+        except ImportError:
+            print("⚠️  WARNING: GOOGLE_PASSWORD not found. Set GOOGLE_PASSWORD environment variable or add google_password to secret.py")
+            google_password = "default_password"  # Fallback to prevent error
+    
+    try:
+        hashed_password = bcrypt.generate_password_hash(google_password).decode('utf-8')
+    except Exception as e:
+        print(f"❌ Error hashing password: {e}")
+        flash("An error occurred during authentication. Please try again.", "danger")
+        return redirect(url_for('login'))
 
     user_info = session.get('user')
-    email = user_info['email']  # Correct the key access for email
-    first_name = user_info['given_name']
-    last_name = user_info['family_name']
-
-    # Check if user already exists in the database
-    user = User.query.filter_by(email=email).first()
-
-    if user is None:
-        # Create a new user
-        new_user = User(email=email, first_name=first_name, last_name=last_name, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-        user = new_user
-    else:
-        # Optionally update existing user details
-        user.first_name = first_name
-        user.last_name = last_name
-        db.session.commit()
+    if not user_info:
+        print("❌ Google OAuth: User info not found in session")
+        flash("Authentication failed. Please try again.", "danger")
+        return redirect(url_for('login'))
     
-    login_user(user)
-    return redirect(url_for("user_dashboard"))
+    try:
+        email = user_info.get('email')
+        first_name = user_info.get('given_name', '')
+        last_name = user_info.get('family_name', '')
+        
+        if not email:
+            print("❌ Google OAuth: Email not found in user info")
+            flash("Unable to retrieve email from Google account.", "danger")
+            return redirect(url_for('login'))
+        
+        print(f"📧 Processing Google OAuth for email: {email}")
+        
+        # Check if user already exists in the database
+        user = User.query.filter_by(email=email).first()
+
+        if user is None:
+            # Create a new user
+            print(f"➕ Creating new user: {email}")
+            new_user = User(email=email, first_name=first_name, last_name=last_name, password=hashed_password)
+            db.session.add(new_user)
+            db.session.commit()
+            user = new_user
+            flash(f"Welcome, {first_name}! Your account has been created.", "success")
+        else:
+            # Optionally update existing user details
+            print(f"🔄 Updating existing user: {email}")
+            user.first_name = first_name
+            user.last_name = last_name
+            db.session.commit()
+            flash(f"Welcome back, {first_name}!", "success")
+        
+        login_user(user)
+        print(f"✅ User logged in successfully: {email}")
+        return redirect(url_for("user_dashboard"))
+        
+    except Exception as e:
+        print(f"❌ Error processing user login: {e}")
+        db.session.rollback()
+        flash("An error occurred while processing your login. Please try again.", "danger")
+        return redirect(url_for('login'))
 
 
 
@@ -1114,7 +1199,8 @@ def user_dashboard():
     
     google_first_name = current_user.first_name
 
-    cal_info = cal_json['data']
+    # Safely get calendar data, handling cases where 'data' key might not exist
+    cal_info = cal_json.get('data', []) if cal_json else []
     upcoming_events = []
     past_events = []
 
