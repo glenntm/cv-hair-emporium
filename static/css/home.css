@@ -480,6 +480,73 @@ h2 {
     position: relative;
 }
 
+/* Mobile/Tablet Hero Image (765px or less) */
+.mobile-hero-image {
+    display: none;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.mobile-hero-image img {
+    filter: brightness(50%);
+    height: 100vh;
+    width: 100%;
+    object-fit: cover; 
+    object-position: center top;
+    transform: scale(1.1);
+    display: block;
+}
+
+.mobile-hero-image .carousel-caption {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.mobile-hero-image .carousel-caption .cs-content {
+    pointer-events: auto;
+}
+
+/* Hide carousel on mobile/tablet (765px or less) */
+@media only screen and (max-width: 765px) {
+    .desktop-carousel {
+        display: none !important;
+    }
+    
+    .mobile-hero-image {
+        display: block !important;
+        position: relative;
+        width: 100%;
+        height: 100vh;
+    }
+    
+    #hero-1785 {
+        position: relative;
+        min-height: 100vh;
+        overflow: visible;
+    }
+}
+
+/* Show carousel on desktop (larger than 765px) */
+@media only screen and (min-width: 766px) {
+    .desktop-carousel {
+        display: block;
+    }
+    
+    .mobile-hero-image {
+        display: none !important;
+    }
+}
+
 .cs-background img {
     width: 100%;
     height: 100vh;
