@@ -302,7 +302,7 @@ function onSuccess(googleUser) {
   const passwordInput = document.getElementById('password-1525');
   const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-  passwordInput.addEventListener('input', function() {
+  if (passwordInput) passwordInput.addEventListener('input', function() {
     if (passwordPattern.test(passwordInput.value)) {
       passwordInput.setCustomValidity('');
       passwordInput.style.borderColor = 'green';
@@ -320,49 +320,50 @@ function onSuccess(googleUser) {
     });
 });
 
-function toggleSubSection(event) {
-    event.stopPropagation();
-    const li = event.currentTarget;
-    const subSection = li.querySelector('.sub-section');
-    const arrow = li.querySelector('.arrow');
+document.addEventListener('DOMContentLoaded', function () {
+  var menu = document.querySelector('#services .service-menu');
+  if (!menu) return;
 
-    if (li.classList.contains('active')) {
-        li.classList.remove('active');
-        subSection.style.maxHeight = '0';
-    } else {
-        li.classList.add('active');
-        subSection.style.maxHeight = subSection.scrollHeight + 'px';
+  menu.addEventListener('click', function (event) {
+    var trigger = event.target.closest('.menu-trigger');
+    if (!trigger || !menu.contains(trigger)) return;
+
+    var group = trigger.closest('.menu-group');
+    var willOpen = !group.classList.contains('is-open');
+
+    if (willOpen && group.parentElement === menu) {
+      menu.querySelectorAll(':scope > .menu-group.is-open').forEach(function (other) {
+        if (other !== group) closeGroup(other);
+      });
     }
-}
 
-function toggleSubSection(event) {
-  event.stopPropagation();
-  const li = event.currentTarget;
-  const subSection = li.querySelector('.sub-section');
-  const arrow = li.querySelector('.arrow');
+    if (willOpen) openGroup(group);
+    else closeGroup(group);
+  });
 
-  if (li.classList.contains('active')) {
-      li.classList.remove('active');
-      subSection.style.maxHeight = '0';
-  } else {
-      li.classList.add('active');
-      subSection.style.maxHeight = subSection.scrollHeight + 'px';
+  function openGroup(group) {
+    var trigger = group.querySelector(':scope > .menu-trigger');
+    var panel = group.querySelector(':scope > .menu-panel');
+    group.classList.add('is-open');
+    trigger.setAttribute('aria-expanded', 'true');
+    if (panel) panel.removeAttribute('inert');
   }
-}
 
-function toggleInnerSubSection(event) {
-  event.stopPropagation();
-  const p = event.currentTarget;
-  const innerSubSection = p.nextElementSibling;
-
-  if (p.classList.contains('active')) {
-      p.classList.remove('active');
-      innerSubSection.style.maxHeight = '0';
-  } else {
-      p.classList.add('active');
-      innerSubSection.style.maxHeight = innerSubSection.scrollHeight + 'px';
+  function closeGroup(group) {
+    group.classList.remove('is-open');
+    var trigger = group.querySelector(':scope > .menu-trigger');
+    var panel = group.querySelector(':scope > .menu-panel');
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    if (panel) panel.setAttribute('inert', '');
+    group.querySelectorAll('.menu-group.is-open').forEach(function (nested) {
+      nested.classList.remove('is-open');
+      var nestedTrigger = nested.querySelector(':scope > .menu-trigger');
+      var nestedPanel = nested.querySelector(':scope > .menu-panel');
+      if (nestedTrigger) nestedTrigger.setAttribute('aria-expanded', 'false');
+      if (nestedPanel) nestedPanel.setAttribute('inert', '');
+    });
   }
-}
+});
 
 
 
