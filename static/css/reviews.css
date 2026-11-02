@@ -144,6 +144,7 @@
   margin: 0;         /* Remove margin */
   display: flex;     /* Display the stars in a horizontal row */
   gap: 4px;          /* Optional: Add space between stars */
+  justify-content: center;
 }
 
 /* Style for each star */
@@ -159,6 +160,7 @@
 
 .pagination {
   margin-top: 3rem;
+  justify-content: center;
 }
 
 .pagination-container {
@@ -211,6 +213,7 @@
   /* Toggle Button */
   .toggle-buttons {
     display: flex;
+    justify-content: center;
     gap: 10px;
     margin-bottom: 1.5rem;
 }

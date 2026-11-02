@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/gallery.css') }}">
+{% endblock %}
 {% block content %}
 <div class="gallery">
     {% for item in gallery_items %}

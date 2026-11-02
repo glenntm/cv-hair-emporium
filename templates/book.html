@@ -1,9 +1,11 @@
 {% extends "base.html" %}
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/book.css') }}">
+{% endblock %}
 {% block content %}
 <!-- ============================================ -->
 <!--                   Contact                    -->
 <!-- ============================================ -->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/book.css') }}">
 
 <section id="contact-983">
     <div class="cs-container">

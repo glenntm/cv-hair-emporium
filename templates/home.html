@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
 {% block content %}
 <!-- ============================================ -->
 <!--                    Hero                      -->
@@ -425,7 +428,7 @@
                         <span class="menu-price">$65+</span>
                     </div>
                     <div class="menu-line">
-                        <span class="menu-name">Quick Weak Styles</span>
+                        <span class="menu-name">Quick Weave Styles</span>
                         <span class="menu-price">$100+</span>
                     </div>
                     <div class="menu-line">
@@ -469,7 +472,7 @@
                         <span class="menu-price">$100+</span>
                     </div>
                     <div class="menu-line">
-                        <span class="menu-name">Individial Box Braids</span>
+                        <span class="menu-name">Individual Box Braids</span>
                         <span class="menu-price">$100+</span>
                     </div>
                     <div class="menu-line">

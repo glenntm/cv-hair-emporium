@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/resetPwConfirmation.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pwTokenExpiration.css') }}">
+{% endblock %}
 {% block content %}
 
 <section class="tokenExpiration">

@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/resetPwConfirmation.css') }}">
+{% endblock %}
 {% block content %}
 
 <section class="resetPwConfirmation reset-section">
